@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+
+
+	<display-name>Archetype Created Web Application</display-name>
+	
+	<welcome-file-list>
+  		<welcome-file>index.jsp</welcome-file>
+  	</welcome-file-list>
+	
+	
+	
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+            /WEB-INF/spring/root-context.xml
+            /WEB-INF/spring/spring-security.xml
+        </param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+    
+    
+     <servlet>
+        <servlet-name>appServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/servlet-context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>appServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    
+
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>
+            org.springframework.web.filter.CharacterEncodingFilter
+        </filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+	<!-- Spring Security 관련 셋팅 -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
+	<servlet>
+		<description></description>
+		<display-name>InitWebApp</display-name>
+		<servlet-name>InitWebApp</servlet-name>
+		<servlet-class>com.peoplewiki.common.util.InitWeb</servlet-class>
+		<init-param>
+			<param-name>configOption</param-name>
+			<param-value>/WEB-INF/classes/config/props/${env}/configOption.properties</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+
+	<!--크로스 사이트 스크립팅 --> 
+<!-- 	<filter>
+		<filter-name>XSS</filter-name>
+		<filter-class>com.peoplewiki.common.util.filter.CrossScriptingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>XSS</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+ -->	 
+	
+	<!-- 
+		url-pattern 태그의 값은 /*로 주도록 한다
+		원래는 spring web을 접근하는 url pattern이 *.do 스타일이라 이 부분도 *.do로 주었는데..
+		이럴 경우 Spring Security 라이브러리에서 내부적으로 작업을 위해 사용하는 url pattern이 *.do 패턴이 아니기 때문에 정상적으로 동작하지 않는다
+		(디폴트 로그인 페이지의 url이 spring_security_login 임을 감안하면 당연 이해가 되는 부분이다)
+		그래서 /*로 주도록 한다
+		이럴 경우 css나 이미지도 Spring Security가 관여할려고 시도할수 있으나..
+		Spring Security 3.1에서는 <http> 엘리먼트를 여러개 사용할 수 있기 때문에
+		Spring Security가 적용되지 말아야 할 url 패턴을 등록할 수 있다
+		
+		<http pattern="/css/**" security="none"/>    
+    	<http pattern="/images/**" security="none"/>
+		
+	-->
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> 
+	
+<!--     <resource-ref>
+        <description>jdbc/mapdb</description>
+        <res-ref-name>jdbc/mapdb</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref> -->
+
+	<jsp-config>
+    	<jsp-property-group>
+        	<url-pattern>*.jsp</url-pattern>
+          	<page-encoding>UTF-8</page-encoding>
+			<include-prelude>/WEB-INF/include/initCommon.jsp</include-prelude>
+      	</jsp-property-group>
+  	</jsp-config>
+  	
+
+
+
+
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error/sub/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error/sub/500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/error/sub/400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/error/sub/400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/error/sub/403.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/error/sub/error.jsp</location>
+	</error-page>
+	
+	
+	
+</web-app>

@@ -1,0 +1,50 @@
+<?xml version= "1.0" encoding ="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="excelPoi">
+	
+<!-- 		<foreach collection="array" index="index" open="(" close=")" separator="," >		
+			${array[index]}
+		</foreach> -->
+	
+	<insert id="insertForm1"  parameterType="poiBean">
+		INSERT INTO cain007.excel(a, b, c, d, e, f, g, h, i) VALUES 
+		( #{a}, #{b}, #{c}, #{d}, #{e}, #{f}, #{g}, #{h}, #{i} )
+	</insert>
+	
+	<insert id="insertForm2" parameterType="poiBean">
+		INSERT INTO cain007.excel2(a, b, c) VALUES 
+		( #{a}, #{b}, #{c} )
+	</insert>
+	
+	<select id="listForm1" resultType="poiBean">
+SELECT excel.a,
+       excel.b,
+       excel.c,
+       excel.d,
+       excel.e,
+       excel.f,
+       excel.g,
+       excel.h,
+       excel.i
+  FROM cain007.excel excel	
+  ORDER BY idx ASC 
+	</select>
+	
+	<select id="listForm2" resultType="poiBean">
+SELECT excel2.a, excel2.b, excel2.c
+  FROM cain007.excel2 excel2
+  ORDER BY idx ASC	
+	</select>
+	
+
+<delete id="delForm1">
+	delete from excel
+</delete>
+	
+<delete id="delForm2">
+	delete from excel2
+</delete>	
+	
+	
+</mapper>

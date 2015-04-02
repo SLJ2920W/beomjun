@@ -1,0 +1,33 @@
+SVN 커밋시 특정 파일&폴더 제외 방법
+- Window > Preference > Team > Ignored Resources 
+( 버전관리 대상에서 제외시킬 파일의 패턴을 정의해 둠으로써 관리가 가능하다. )
+
+- 동기화를 진행 > 제외하고자 하는 파일 또는 디렉토리 위에서 마우스 오른쪽 버튼 > Team > Add to svn:ignore 
+해당 파일이나 디렉토리에 대해서 ignore을 설정할 수 있다.
+
+
+스프링 시큐리티 참조 
+- http://zgundam.tistory.com/53, https://github.com/TerryChang/spring_security_blog_sample
+     
+     
+빈 호출은 아래 3가지
+@Inject
+private ReloadableFilterInvocationSecurityMetadataSource iq;
+
+@Autowired
+@Qualifier("reloadableFilterInvocationSecurityMetadataSource")
+private ReloadableFilterInvocationSecurityMetadataSource qr;
+
+@Autowired
+private ReloadableFilterInvocationSecurityMetadataSource reloadableFilterInvocationSecurityMetadataSource;
+
+
+MABATIS DYNAMIC SQL 참조 
+- http://mybatis.github.io/mybatis-3/ko/dynamic-sql.html
+- http://gubok.tistory.com/m/post/386
+
+
+Spring AOP 참조 
+- http://www.egovframe.go.kr/wiki/doku.php?id=egovframework:rte:fdl:aop:aspectj
+- https://www.google.co.kr/?gws_rd=ssl#newwindow=1&q=aspectj+%ED%91%9C%ED%98%84%EC%8B%9D
+- http://knoc720.blogspot.kr/2014/10/spring-aop.html

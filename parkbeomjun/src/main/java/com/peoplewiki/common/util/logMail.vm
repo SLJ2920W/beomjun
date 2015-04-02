@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+
+
+<title>Insert title here</title>
+</head>
+
+<body>
+<div id="popupInstallSendForm" style="width:850px;">
+    
+                      <div class="pop_bg"></div>
+                            <div class="pop_body">
+								<h6 style="height:24px; background:#595959; padding-top:9px; padding-left:10px; margin:0px; text-align:left; color:#ffffff;font-size:100%;">설치요청사 정보</h6>
+                                <div class="pop_scroll">
+								<p class="date" style="text-align: right;margin-top: 10px;font-size:120%;">전송일시 : 2013-01-01</p>
+                                  <div class="pop_content">
+			                        <h5 style="padding-left: 20px;background: url(http://g2bnara.com:8080/g2b/images/content/depth_1.gif) no-repeat 0px 3px;font-size:115%;margin-top:20px;">설치요청 및 확인서</h5>
+                                      <div class="table_row">
+                                        <table summary="" style="line-height: 158%;font-size: 100%;width: 850px;border: 2px solid #D9D9D9;border-collapse: collapse;border-spacing: 0; ">
+                                          <caption></caption>
+                                              <colgroup>
+                                              <col width="150" />
+                                              <col width="" />
+                                              <col width="150" />
+                                              <col width="" />
+                                              </colgroup>
+                                          <tbody>
+                                            	<tr>
+		                                            <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">요청사</th>
+		                                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstallInfo.supplier</td>
+		                                            <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">설치요청번호</th>
+		                                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$poupDeliveryListGet.identification</td>
+                                               	</tr>
+                                            	<tr>
+													<th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row" >담당자</th>
+		                                           	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstallInfo.sup_emp_name</td>
+		                                            <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">연락처</th>
+		                                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstallInfo.sup_emp_tel</td>
+                                               </tr>
+                                            </tbody>
+                                          </table>
+										  </div>
+								      <div class="table_col">
+								        <h5 style="padding-left: 20px;background: url(http://g2bnara.com:8080/g2b/images/content/depth_1.gif) no-repeat 0px 3px;font-size:115%;margin-top:20px;">설치물품 정보</h5>
+											<table summary="설치물품 정보" class="mt0" style="background: url(http://g2bnara.com:8080/g2b/images/content/depth_1.gif) no-repeat 0px 3px;line-height: 158%;font-size: 100%;width: 850px;border: 2px solid #D9D9D9;border-collapse: collapse;border-spacing: 0;text-align: center;">
+											  <caption></caption>
+                                                <colgroup>
+	                                            <col width="90">
+	                                            <col width="120">
+	                                            <col width="*">
+	                                            <col width="50">
+	                                            <col width="80">
+	                                            <col width="80">
+	                                            <col width="80">
+	                                            <col width="80">
+                                                </colgroup>
+											  <thead> 
+											     <tr>
+                       	                          <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">물품분류번호</th>
+                       	                          <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">품명</th>
+                       	                          <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">규격</th>
+                       	                          <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">수량</th>
+                       	                          <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">출고요청일자</th>
+                       	                          <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">도착기한</th>
+                       	                          <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">설치일</th>
+												  <th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;">배송방법</th>
+                                                </tr>
+											  </thead>
+											  <tbody>
+													#set( $num = 1 )
+													#foreach($a in $poupDeliveryItemList)
+													<tr>
+	                       	                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.classification</td>
+	                       	                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.item_name</td>
+	                       	                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.item_description </td>
+	                       	                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.send_number</td>
+	                       	                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.release_date </td>
+	                       	                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.arrive_date </td>
+	                       	                            <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.install_date </td>
+													    <td style="padding: 5px;border: 1px solid #D9D9D9;">$a.receive_method_text</td>
+                    								</tr>
+													#set( $num = $num + $a.send_number )
+													#end
+												    <tr>
+												      	<td style="padding: 5px;border: 1px solid #D9D9D9;" colspan="3">합계</td>
+	                       	                          	<td style="padding: 5px;border: 1px solid #D9D9D9;">$num</td>
+	                       	                          	<td style="padding: 5px;border: 1px solid #D9D9D9;"></td>
+	                       	                          	<td style="padding: 5px;border: 1px solid #D9D9D9;"></td>
+	                       	                          	<td style="padding: 5px;border: 1px solid #D9D9D9;"></td>
+													  	<td style="padding: 5px;border: 1px solid #D9D9D9;"></td>
+													</tr>
+											    </tbody>	  
+											</table>
+											<p class="txt01">* 대량 납품의 경우 제품에 대한 고유번호(SN)을 별지로 제출바랍니다.</p>
+										</div>
+								      	<h5 style="padding-left: 20px;background: url(http://g2bnara.com:8080/g2b/images/content/depth_1.gif) no-repeat 0px 3px;font-size:115%;margin-top:20px;">설치위치 정보</h5>
+                                      	<div class="table_row">
+											<table summary="" style="line-height: 158%;font-size: 100%;width: 850px;border: 2px solid #D9D9D9;border-collapse: collapse;border-spacing: 0;text-align: center;text-align: left;text-indent: 7px;">
+	                                          	<caption></caption>
+	                                              	<colgroup>
+	                                              	<col width="150" />
+	                                              	<col width="" />
+	                                              	<col width="150" />
+	                                              	<col width="" />
+	                                              	</colgroup>
+	                                          	<tbody>
+		                                            <tr>
+		                                              	<th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">수요기관정보</th>
+		                                              	<td style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" colspan="3">$popupInstall.check_organization_name</td>
+													</tr>
+		                                            <tr>
+		                                              	<th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">담당자</th>
+		                                              	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.check_name</td>
+		                                              	<th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">부서</th>
+		                                              	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.check_department</td>
+													</tr>
+		                                            <tr>
+		                                              	<th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">전화번호</th>
+		                                              	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.check_phone</td>
+		                                              	<th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">팩스</th>
+		                                              	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.check_fax</td>
+													</tr>
+		                                            <tr>
+		                                              	<th style="padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">주소</th>
+		                                              	<td style="padding: 5px;border: 1px solid #D9D9D9;" colspan="3">$popupInstall.check_addr</td>
+													</tr> 
+												</tbody>
+                                          	</table>
+										</div>
+									  <div class="table_row">
+											<h5 style="padding-left: 20px;background: url(http://g2bnara.com:8080/g2b/images/content/depth_1.gif) no-repeat 0px 3px;font-size:115%;margin-top:20px;">설치업체 정보</h5>
+												<table summary="" style="line-height: 158%;font-size: 100%;width: 850px;border: 2px solid #D9D9D9;border-collapse: collapse;border-spacing: 0;text-align: left;text-indent: 10px;">
+													<caption></caption>
+														<colgroup>
+															<col width="150" />
+			                                                <col width="" />
+			                                                <col width="150" />
+			                                                <col width="" />
+	                                                  	</colgroup>
+                                                    <tbody>
+                                                      	<tr>
+															<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">업체명</th>
+                                                        	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.business_company_name_kr</td>
+                                                        	<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">담당자</th>
+                                                        	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.installer_name</td>
+														</tr>
+                                                      	<tr>
+															<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">전화번호</th>
+                                                        	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.installer_phone</td>
+                                                        	<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">핸드폰</th>
+                                                        	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.installer_cell_phone</td>
+                                                         </tr>
+                                                      	<tr>
+															<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">팩스</th>
+                                                        	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.installer_fax</td>
+                                                        	<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">이메일</th>
+                                                        	<td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.installer_mail</td>
+                                                         </tr>
+													</tbody>
+												</table>
+										</div>
+									  		<div class="table_row">
+									    		<h5 style="padding-left: 20px;background: url(http://g2bnara.com:8080/g2b/images/content/depth_1.gif) no-repeat 0px 3px;font-size:115%;margin-top:20px;">검사/검수 정보</h5>
+												<table summary="" style="line-height: 158%;font-size: 100%;width: 850px;border: 2px solid #D9D9D9;border-collapse: collapse;border-spacing: 0;text-align: left;text-indent: 7px;">
+                                                    <caption></caption>
+                                                  	<colgroup>
+	                                                  	<col width="150" />
+	                                                  	<col width="" />
+	                                                  	<col width="150" />
+	                                                  	<col width="" />
+													</colgroup>
+													<tbody>
+														<tr>
+															<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" colspan="4" scope="col"><strong>검사 정보</strong></th>
+														</tr>
+														<tr>
+	                                                        <th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">검사 기관명</th>
+	                                                        <td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.org_identifier_name</td>
+	                                                        <th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="col">검사자</th>
+	                                                        <td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.employee_iden_name</td>
+                                                        </tr>
+														<tr>
+															<th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" colspan="4" scope="col"><strong>검수 정보</strong></th>
+														</tr>
+                                                      	<tr>
+	                                                        <th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">검수 기관명</th>
+	                                                        <td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.examiner_identifier_name</td>
+	                                                        <th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">검수자</th>
+	                                                        <td style="padding: 5px;border: 1px solid #D9D9D9;">$popupInstall.employee_exam_name</td>
+                                                       	</tr>
+                                                      	<tr>
+	                                                        <th style="font-weight: normal;padding: 5px;border: 1px solid #D9D9D9;background: #F1F4F5;" scope="row">최종 검수자</th>
+	                                                        <td style="padding: 5px;border: 1px solid #D9D9D9;" colspan="3"><input type="text"> <span>(인)</span></td>
+                                                       	</tr>
+													</tbody>
+												</table>
+											</div>
+								      <div class="text">
+								        <h5 style="padding-left: 20px;background: url(http://g2bnara.com:8080/g2b/images/content/depth_1.gif) no-repeat 0px 3px;font-size:115%;margin-top:20px;">특이사항</h5>
+										    <textarea title="내용" class="textarea03" style="width: 838px;height: 136px;"></textarea>
+								            <p class="txt01">* 설치담당자는 물품 설치완료 후 &quot;설치 요청서"&quot;를 FAX 또는 이메일로 <u>$proUserGet.business_sector_code_text</u> 에 전송 부탁드립니다<br/>
+								          <span class="ml10">(FAX : 123 / 이메일 :<a href="mailto:"$proUserGet.fax" >$proUserGet.mail</a>)</span>
+										  </p>
+									 </div>
+                                  </div>
+                                </div>
+                             </div>
+</div>       
+
+</body>
+</html>

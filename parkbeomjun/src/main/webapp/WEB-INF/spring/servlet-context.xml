@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+<!-- http://blog.outsider.ne.kr/903 -->
+
+    <context:component-scan base-package="com.peoplewiki">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+    </context:component-scan>
+    
+	<!-- annotation-config 파기 되고 annotation-driven 으로 대체됨 -->
+    <mvc:annotation-driven />
+    <mvc:default-servlet-handler />
+	<mvc:resources location="/resources/theme1/" mapping="/resources/**" />
+	
+	<!-- 다국어 설정 - 쿠키 -->
+	<import resource="i18n-context.xml"/>	
+	
+	<!-- 뷰 설정  -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  		<property name="prefix" value="/WEB-INF/views/"/>
+  		<property name="suffix" value=".jsp"/>
+  		<property name="order" value="2"/>
+        <property name="viewNames" value="*/*" />  	
+        <property name="contentType" value="text/html; charset=UTF-8"/>	
+	</bean>
+	
+	<!-- 타일즈 뷰 설정 -->
+	<bean id="tilesviewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+        <property name="order" value="3"/>	
+        <property name="viewNames" value="*.*" />
+	</bean> 
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions"> 
+			<list> 
+				<value>/WEB-INF/tiles/*-tiles3.xml</value> 
+			</list> 
+		</property> 
+	</bean>
+
+	<!-- EXCEL, PDF, JSON, XML VIEW-->
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="order" value="0" />
+		<property name="contentNegotiationManager">
+			<bean class="org.springframework.web.accept.ContentNegotiationManager">
+				<constructor-arg>
+					<bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+						<constructor-arg>
+							<map>
+								<entry key="json" value="application/json" />
+								<entry key="xml" value="application/xml" />
+								<entry key="pdf" value="application/pdf" />
+								<entry key="xlsx" value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+							</map>
+						</constructor-arg>
+					</bean>
+				</constructor-arg>
+			</bean>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<!-- JSON View -->
+				<bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+				<!-- XML view -->
+				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<constructor-arg>
+						<bean class="org.springframework.oxm.castor.CastorMarshaller"/>
+					</constructor-arg>
+				</bean>
+ 				<!-- PDF view -->
+				<bean class="com.peoplewiki.common.handler.PDFView"/>
+				<!-- XLSX "Excel" view -->
+				<bean class="com.peoplewiki.common.handler.ExcelView"/>
+			</list>
+		</property>
+		<property name="ignoreAcceptHeader" value="true" />
+	</bean>
+	
+	
+	<!-- FILE UPLOAD -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" >
+		<property name="maxUploadSize">
+			<value>1024000000</value>
+		</property>
+	</bean>	
+
+</beans>

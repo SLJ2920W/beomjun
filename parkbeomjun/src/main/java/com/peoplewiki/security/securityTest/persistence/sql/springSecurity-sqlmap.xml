@@ -1,0 +1,151 @@
+<?xml version= "1.0" encoding ="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="security">
+
+
+
+	<!-- 권한 메뉴 단계가 최대 몇단계로 되어 있는지 조회 -->
+	<select id="urlMaxDepth" resultType="int">
+		SELECT MAX(sort_depth) FROM secured_resources
+	</select>
+	
+	<!-- URL 마지막 resources_id 겟 -->
+	<select id="urlMaxResourceId" resultType="securityBean">
+		SELECT MAX(resource_id) AS resource_id FROM secured_resources 
+	</select>
+	
+	<!-- 권한 리스트 -->
+	<select id="authList" resultType="securityBean">
+		SELECT
+				idx
+			,	authority
+			,	authority_name
+		FROM 
+			authority
+	</select>
+	
+
+	<!-- URL 리스트 -->
+	<select id="urlList" resultType="securityBean" parameterType="int">
+		SELECT 
+				sc.idx
+	       	,	sc.resource_id
+			,	sc.resource_name
+	       	,	sc.resource_pattern
+	       	,	sc.resource_type
+	       	,	sc.sort_order
+	       	,	sc.sort_group
+			,	sc.sort_depth
+			,	sc.useYN
+			,	sc.menuYN
+		FROM
+			cain007.secured_resources sc
+ 		<where>	
+			<if test="value != -1">
+				sc.sort_depth = #{value}
+			</if>	
+		</where>
+		<!-- ORDER BY sc.sort_group ASC, sc.sort_order DESC -->
+	</select>
+	
+	<!-- 권한 URL 보기 -->
+	<select id="authUrlView" resultType="securityBean" parameterType="securityBean">
+		SELECT 
+				sc.idx
+	       	,	sc.resource_id
+			,	sc.resource_name
+	       	,	sc.resource_pattern
+	       	,	sc.resource_type
+	       	,	sc.sort_order
+	       	,	sc.sort_group
+			,	sc.sort_depth
+			,	sc.sort_parent
+			,	sc.useYN
+			,	sc.menuYN
+		FROM
+			cain007.secured_resources sc
+ 		<where>	
+			<if test="resource_id != null">
+				sc.resource_id = #{resource_id}
+			</if>	
+		</where>
+	</select>
+	
+	<!-- 권한 URL 리스트 -->
+	<select id="authUrlList" resultType="securityBean" parameterType="securityBean">
+		SELECT 
+				sra.idx
+	       	,	sra.resource_id
+       		,	sra.authority
+       		,	IFNULL(a.authority_name, '모든 사용자') AS authority_name
+  		FROM 
+  			cain007.secured_resources_authority sra
+		LEFT OUTER JOIN cain007.authority a ON a.authority = sra.authority  			
+  		WHERE
+  			sra.resource_id = #{resource_id}	
+	</select>
+	
+	<!-- 권한 URL 삭제 -->
+	<delete id="authDelete" parameterType="securityBean">
+		DELETE FROM cain007.secured_resources_authority 
+		WHERE
+			resource_id = #{resource_id}		
+	</delete>
+	
+	<!-- 권한 URL 설정 추가 -->
+	<insert id="authInsert" parameterType="securityBean">
+		INSERT INTO cain007.secured_resources_authority
+			( resource_id, authority)
+		VALUES
+		<foreach collection="authority_arr" item="i" index="index" separator=" , ">
+			( #{resource_id}, #{i} ) 
+		</foreach>		
+	</insert>
+	
+	<!-- URL 수정 -->
+	<update id="urlUpdate" parameterType="securityBean">
+		UPDATE cain007.secured_resources 
+			<set>
+				<if test="useYN != null ">					useYN      				=        #{useYN}				,	</if>
+				<if test="menuYN != null ">					menuYN      			=        #{menuYN}				,	</if>
+				<if test="resource_name != '' " >			resource_name       	=        #{resource_name}		,	</if>
+				<if test="resource_pattern != '' " >		resource_pattern       	=        #{resource_pattern}	,	</if>
+			</set>
+		WHERE
+			idx = #{idx}
+	</update>
+	
+	<!-- 하위 모든 URL 수정 -->
+	<update id="urlUpdateChildren" parameterType="securityBean">
+		UPDATE cain007.secured_resources 
+			<set>
+					useYN      	=     #{useYN}				
+				,	menuYN      =     #{menuYN}				
+			</set>
+		WHERE
+			(sort_parent = #{idx}	AND		sort_depth >= #{sort_depth} ) 
+		OR
+			idx = #{idx}
+	</update>
+	
+	
+	<!-- 하위 모든 권한 URL 리스트 -->
+	<select id="authUrlListChildren" parameterType="securityBean" resultType="securityBean">
+		SELECT resource_id FROM  secured_resources 
+		WHERE
+			sort_parent = #{sort_parent} 
+		OR 
+			idx = #{sort_parent}	
+	</select>
+	
+	<!-- URL 추가 -->
+	<insert id="urlInsert" parameterType="securityBean">
+		INSERT INTO secured_resources 
+			( resource_id, resource_name, resource_pattern, resource_type, sort_order, sort_parent, sort_group, sort_depth, useYN, menuYN )
+		VALUES		
+			( #{resource_id}, #{resource_name}, #{resource_pattern}, #{resource_type}, 0, #{sort_parent}, #{sort_group}, #{sort_depth}, #{useYN}, #{menuYN} )
+	</insert>
+	
+	
+</mapper>

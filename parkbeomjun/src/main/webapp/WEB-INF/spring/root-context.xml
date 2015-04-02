@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+             http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.1.xsd 
+             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
+
+	<context:component-scan base-package="com.peoplewiki">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<aop:aspectj-autoproxy />
+
+<!-- 	<util:properties id="info" location="classpath:/config/props/${env}/*.properties" /> -->
+	<util:properties id="info" location="classpath:/config/props/${env}/web_admin_info.properties" />
+
+	<import resource="classpath:config/db/${env}/mysql/db-config.xml" />
+
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list >				
+ 				<value>/WEB-INF/messages/spring_security_messages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="5" />
+	</bean>
+
+</beans>
