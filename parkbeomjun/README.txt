@@ -1,4 +1,4 @@
-주소는 호스트:8080/parkbeomjun/
+주소는 ip:port/parkbeomjun/
 
 실행전 서버 실행 옵션에 아래 3 가지 중에 한가지를 넣어줘야 함 
 -Denv=1-LOCAL
