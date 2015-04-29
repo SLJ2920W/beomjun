@@ -17,7 +17,7 @@
 - TILES 3
 - LOGBACK
 
-리소스 경로를 잡을때 theme 를 빼고 잡아야함 맵핑 설정을 그렇게 하였음
+리소스 경로를 잡을때 theme 를 빼고 잡아야함 ( 테마에 따라 css변경을 위해 )
 실제 경로 - {WEBROOT}/resources/theme<?>/css/resume/default.css
 맵핑 경로 - {WEBROOT}/resources/css/resume/default.css
 
