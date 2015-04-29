@@ -7,7 +7,8 @@ SVN 커밋시 특정 파일&폴더 제외 방법
 
 
 스프링 시큐리티 참조 
-- http://zgundam.tistory.com/53, https://github.com/TerryChang/spring_security_blog_sample
+- http://zgundam.tistory.com/53
+- https://github.com/TerryChang/spring_security_blog_sample
      
      
 빈 호출은 아래 3가지
