@@ -1,5 +1,5 @@
 # beomjun
 
-http://*.people-wiki.com 소스
+http://*.people-wiki.com 일부 소스
 
 from park beomjun 
