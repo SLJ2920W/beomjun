@@ -101,7 +101,6 @@ public class Main extends Application {
 		rootPane.setCenter(hBoxPane);
 
 		MailViewController poc = loader.getController();
-		poc.setMain(this);
 	}
 	
 	

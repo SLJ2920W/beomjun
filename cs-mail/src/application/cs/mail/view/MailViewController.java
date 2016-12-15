@@ -3,6 +3,8 @@ package application.cs.mail.view;
 import java.io.File;
 
 import application.cs.mail.Main;
+import application.sample.filetreeviewsample.PathItem;
+import application.sample.filetreeviewsample.PathTreeCell;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -14,8 +16,6 @@ public class MailViewController {
 	
 	@FXML
 	private TreeView<File> treeView;
-	@FXML
-	private VBox vbox; 
 	
 	
 //	@FXML
@@ -23,18 +23,22 @@ public class MailViewController {
 //	@FXML
 //	private TableColumn<Person, String> lastNameColumn;
 
-	public void setMain(Main main) {
-		this.main = main;
-//		TreeItem<File> list = this.main.getTreeData();
-//		treeView = new TreeView<File>(list);
-		
-//		this.main.getTreeData();
+	public void setTreeView(TreeItem<File> value) {
+		treeView.setRoot(value);
 	}
 
 
 
 	@FXML
 	private void initialize() {
+		
+		
+//		treeView.setCellFactory((TreeView<PathItem> p) -> {
+//            final PathTreeCell cell = new PathTreeCell(stage, messageProp);
+//            setDragDropEvent(stage, cell);
+//            return cell;
+//        });
+		
 		// 연락처 테이블의 두 열을 초기화한다.
 //		firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
 //		lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());

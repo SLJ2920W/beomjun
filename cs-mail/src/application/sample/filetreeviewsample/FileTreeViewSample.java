@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -52,7 +52,7 @@ public class FileTreeViewSample extends Application {
 
     private ExecutorService service;
     private Task watchTask;
-    private SearchTask searchTask;
+    private SearchTask searchTask; 
     private TextField rootDirText;
     private Path rootPath;
     private Button dispBtn;

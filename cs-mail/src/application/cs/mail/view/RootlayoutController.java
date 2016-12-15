@@ -8,14 +8,14 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import application.cs.mail.Main;
-import application.cs.mail.model.FileBean;
+import application.sample.address.MainApp;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 
 public class RootlayoutController {
@@ -43,14 +43,14 @@ public class RootlayoutController {
 				dirList = Files.list(path);
 				String rootDir = path.getFileName().toString();
 
-				TreeItem<File> treeItem = new TreeItem<File>();
 				
-//				TreeItem<File> treeItem = createNode(new File(selectedDirectory.toString()));
+				TreeItem<File> treeItem = createNode(new File(selectedDirectory.toString()));
+				FXMLLoader loader = new FXMLLoader();
+				loader.setLocation(getClass().getResource("MailView.fxml"));
+				HBox hBoxPane = (HBox) loader.load();
+				MailViewController poc = loader.getController();
+				poc.setTreeView(treeItem);
 				
-//				boolean okClicked = mainApp.showTree(treeItem);
-//		        if (okClicked) {
-//		            mainApp.getPersonData().add(tempPerson);
-//		        }				
 				
 				System.out.println(1);
 			} catch (IOException e) {
