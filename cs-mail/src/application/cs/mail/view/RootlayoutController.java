@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 
 import application.cs.mail.Main;
 import application.sample.address.MainApp;
+import application.sample.filetreeviewsample.PathItem;
+import application.sample.filetreeviewsample.PathTreeItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,10 +22,13 @@ import javafx.stage.DirectoryChooser;
 
 public class RootlayoutController {
 
-	private Main mainApp;
+	@FXML
+	private TreeView<PathItem> folderTree;
 
 	@FXML
-	private TreeView<File> treeView;
+	private TreeView<PathItem> fileTree;
+
+	private Main mainApp;
 
 	public void setMain(Main mainApp) {
 		this.mainApp = mainApp;
@@ -41,18 +46,11 @@ public class RootlayoutController {
 			Stream<Path> dirList = null;
 			try {
 				dirList = Files.list(path);
-				String rootDir = path.getFileName().toString();
+				Path rootPath = Paths.get(selectedDirectory.getAbsolutePath());
+	            PathItem pathItem = new PathItem(rootPath);
+	            folderTree.setRoot(createNode(pathItem));
+	            folderTree.setEditable(false);
 
-				
-				TreeItem<File> treeItem = createNode(new File(selectedDirectory.toString()));
-				FXMLLoader loader = new FXMLLoader();
-				loader.setLocation(getClass().getResource("MailView.fxml"));
-				HBox hBoxPane = (HBox) loader.load();
-				MailViewController poc = loader.getController();
-				poc.setTreeView(treeItem);
-				
-				
-				System.out.println(1);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
@@ -61,8 +59,11 @@ public class RootlayoutController {
 		}
 	}
 	
-	
-	private TreeItem<File> createNode(final File f) {
+    private TreeItem<PathItem> createNode(PathItem pathItem) {
+        return PathTreeItem.createNode(pathItem);
+    }
+
+/*	private TreeItem<File> createNode(final File f) {
 		return new TreeItem<File>(f) {
 			private boolean isLeaf;
 			private boolean isFirstTimeChildren = true;
@@ -87,8 +88,7 @@ public class RootlayoutController {
 				return isLeaf;
 			}
 
-			private ObservableList<TreeItem<File>> buildChildren(
-					TreeItem<File> TreeItem) {
+			private ObservableList<TreeItem<File>> buildChildren(TreeItem<File> TreeItem) {
 				File f = TreeItem.getValue();
 				if (f == null) {
 					return FXCollections.emptyObservableList();
@@ -98,8 +98,7 @@ public class RootlayoutController {
 				}
 				File[] files = f.listFiles();
 				if (files != null) {
-					ObservableList<TreeItem<File>> children = FXCollections
-							.observableArrayList();
+					ObservableList<TreeItem<File>> children = FXCollections.observableArrayList();
 					for (File childFile : files) {
 						children.add(createNode(childFile));
 					}
@@ -108,6 +107,6 @@ public class RootlayoutController {
 				return FXCollections.emptyObservableList();
 			}
 		};
-	}
+	}*/
 
 }
