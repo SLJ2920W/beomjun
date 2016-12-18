@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -11,7 +12,6 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="New" />
                   <MenuItem mnemonicParsing="false" onAction="#menuBar_file" text="경로선택" />
               <MenuItem mnemonicParsing="false" text="닫기" />
             </items>
@@ -30,11 +30,12 @@
       </MenuBar>
    </top>
    <center>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" />
-            <TreeView prefHeight="200.0" prefWidth="200.0" />
-         </children>
-      </HBox>
+      <TreeView fx:id="fileTree" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
+   <left>
+      <TreeView fx:id="folderTree" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <WebView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>

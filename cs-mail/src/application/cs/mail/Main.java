@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import application.cs.mail.model.FileBean;
-import application.cs.mail.view.MailViewController;
 import application.cs.mail.view.RootlayoutController;
 import application.util.Msg;
 import javafx.application.Application;
@@ -15,7 +14,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -62,9 +60,7 @@ public class Main extends Application {
 
 			this.primaryStage = primaryStage;
 
-			rootLayout();
-
-//			content();
+			layout();
 
 		} catch (Exception e) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, Msg.MSG_TXT_001, e);
@@ -72,7 +68,7 @@ public class Main extends Application {
 	}
 
 	// 레이아웃 및 메뉴바
-	public void rootLayout() throws Exception {
+	public void layout() throws Exception {
 		// fxml 로드
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("view/RootLayout.fxml"));
@@ -90,20 +86,6 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
-	// 내용
-	public void content() throws Exception {
-		// FXML 로드
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("view/MailView.fxml"));
-
-		// rootLayout 센터에 삽입
-		HBox hBoxPane = (HBox) loader.load();
-		rootPane.setCenter(hBoxPane);
-
-		MailViewController poc = loader.getController();
-	}
-	
-	
    
 	public static void main(String[] args) {
 		System.out.println("Main()");
