@@ -4,15 +4,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import application.cs.mail.model.FileBean;
 import application.cs.mail.view.RootlayoutController;
 import application.util.Msg;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -25,12 +22,11 @@ public class Main extends Application {
 		return primaryStage;
 	}
 
-	private ObservableList<TreeItem<FileBean>> treeData = FXCollections.observableArrayList();
-//	private TreeItem<File> treeData = new TreeItem<File>();
-
-	public ObservableList<TreeItem<FileBean>> getTreeData() {
-		return treeData;
-	}
+//	private ObservableList<TreeItem<FileBean>> treeData = FXCollections.observableArrayList();
+//
+//	public ObservableList<TreeItem<FileBean>> getTreeData() {
+//		return treeData;
+//	}
 
 	public Main() {
 	}
@@ -77,19 +73,21 @@ public class Main extends Application {
 		// 스테이지 삽입 및 기본 실행 환경 초기화
 		Scene scene = new Scene(rootPane);
 		scene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());
-
+		 
+		
 		RootlayoutController controller = loader.getController();
 		controller.setMain(this);
 
 		// show
 		primaryStage.setScene(scene);
 		primaryStage.show();
+ 
 	}
 
    
 	public static void main(String[] args) {
 		System.out.println("Main()");
-		Logger.getLogger(Main.class.getName()).log(Level.INFO, Thread.currentThread().getName() + " sdfsdfdfs123123");
+		Logger.getLogger(Main.class.getName()).log(Level.INFO, Thread.currentThread().getName());
 		launch(args);
 	}
 }

@@ -1,32 +1,34 @@
 package application.cs.mail.view;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Stream;
+import java.util.ResourceBundle;
+
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 
 import application.cs.mail.Main;
-import application.sample.address.MainApp;
 import application.sample.filetreeviewsample.PathItem;
 import application.sample.filetreeviewsample.PathTreeItem;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.HBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 
-public class RootlayoutController {
+public class RootlayoutController implements Initializable {
 
 	@FXML
 	private TreeView<PathItem> folderTree;
 
 	@FXML
 	private TreeView<PathItem> fileTree;
+	
+	@FXML
+	private WebView webView;
 
 	private Main mainApp;
 
@@ -34,79 +36,98 @@ public class RootlayoutController {
 		this.mainApp = mainApp;
 	}
 
+	public RootlayoutController() {
+		// folderTree = new TreeView<PathItem>();
+		// folderTree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		// ExecutorService service = Executors.newFixedThreadPool(3);
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		folderTree.setRoot(null);
+
+		folderTree.getSelectionModel().selectedItemProperty().addListener(
+				(observable, oldValue, newValue) -> showDetails(oldValue, newValue));
+
+		fileTree.getSelectionModel().selectedItemProperty().addListener(
+				(observable, oldValue, newValue) -> showWebview(newValue));
+	}
+
 	@FXML
-	public void menuBar_file() {
+	public void setMenuBarHandler() {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
 		File selectedDirectory = directoryChooser.showDialog(mainApp.getPrimaryStage());
 		if (selectedDirectory == null) {
 			// 폴더를 선택하지 않음
 		} else {
 			// 경로 보여주자
-			Path path = Paths.get(selectedDirectory.toString());
-			Stream<Path> dirList = null;
-			try {
-				dirList = Files.list(path);
-				Path rootPath = Paths.get(selectedDirectory.getAbsolutePath());
-	            PathItem pathItem = new PathItem(rootPath);
-	            folderTree.setRoot(createNode(pathItem));
-	            folderTree.setEditable(false);
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				dirList.close();
-			}
+			Path rootPath = Paths.get(selectedDirectory.getAbsolutePath());
+			PathItem pathItem = new PathItem(rootPath);
+			folderTree.setRoot(createNode(pathItem));
+			folderTree.setEditable(false);
 		}
 	}
+
+	// 파일 트리 상세
+	public void showDetails(TreeItem<PathItem> oldValue, TreeItem<PathItem> newValue) {
+		
+		fileTree.setRoot(newValue);
+		
+	}
 	
-    private TreeItem<PathItem> createNode(PathItem pathItem) {
-        return PathTreeItem.createNode(pathItem);
-    }
+	// 파일 트리 상세
+	public void showWebview(TreeItem<PathItem> newValue) {
+		TreeItem<PathItem> s = newValue;
+		s.getValue().getPath();
+		System.out.println(newValue);
+		
+		WebEngine engine = webView.getEngine();
+//        engine.load(s.getValue().getPath().toString());
+        engine.load("D:\\Hanwha\\매일 백업\\2016-07-12 224805_남궁선(Namkung Seon)_FWvip접수 한화토탈 김희철 부사장님 일정이 일괄적으로 중복등록된 증상으로 접수되었….eml");
 
-/*	private TreeItem<File> createNode(final File f) {
-		return new TreeItem<File>(f) {
-			private boolean isLeaf;
-			private boolean isFirstTimeChildren = true;
-			private boolean isFirstTimeLeaf = true;
+//		final TextField locationField = new TextField(DEFAULT_URL);
+//
+//		webEngine.locationProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+//
+//			locationField.setText(newValue);
+//
+//		});
+//
+//		EventHandler<ActionEvent> goAction = (ActionEvent event) -> {
+//
+//			webEngine.load(locationField.getText().startsWith("http://")
+//
+//					? locationField.getText()
+//
+//					: "http://" + locationField.getText());
+//
+//		};
+//
+//		locationField.setOnAction(goAction);
+//		Button goButton = new Button("Go");
+//		goButton.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+//		goButton.setDefaultButton(true);
+//		goButton.setOnAction(goAction);
+//
+//		// Layout logic
+//
+//		HBox hBox = new HBox(5);
+//		hBox.getChildren().setAll(locationField, goButton);
+//		HBox.setHgrow(locationField, Priority.ALWAYS);
+//		VBox vBox = new VBox(5);
+//		vBox.getChildren().setAll(hBox, webView);
+//		vBox.setPrefSize(800, 400);
+//		VBox.setVgrow(webView, Priority.ALWAYS);
+//		return vBox;
 
-			@Override
-			public ObservableList<TreeItem<File>> getChildren() {
-				if (isFirstTimeChildren) {
-					isFirstTimeChildren = false;
-					super.getChildren().setAll(buildChildren(this));
-				}
-				return super.getChildren();
-			}
-
-			@Override
-			public boolean isLeaf() {
-				if (isFirstTimeLeaf) {
-					isFirstTimeLeaf = false;
-					File f = (File) getValue();
-					isLeaf = f.isFile();
-				}
-				return isLeaf;
-			}
-
-			private ObservableList<TreeItem<File>> buildChildren(TreeItem<File> TreeItem) {
-				File f = TreeItem.getValue();
-				if (f == null) {
-					return FXCollections.emptyObservableList();
-				}
-				if (f.isFile()) {
-					return FXCollections.emptyObservableList();
-				}
-				File[] files = f.listFiles();
-				if (files != null) {
-					ObservableList<TreeItem<File>> children = FXCollections.observableArrayList();
-					for (File childFile : files) {
-						children.add(createNode(childFile));
-					}
-					return children;
-				}
-				return FXCollections.emptyObservableList();
-			}
-		};
-	}*/
-
+	}
+	
+	private Object showDetails(Number newValue) {
+		return null;
+	}
+	
+	private TreeItem<PathItem> createNode(PathItem pathItem) {
+		return PathTreeItem.createNode(pathItem);
+	}
+	
 }
