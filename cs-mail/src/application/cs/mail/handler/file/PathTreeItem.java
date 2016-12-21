@@ -1,4 +1,4 @@
-package application.cs.mail.handler;
+package application.cs.mail.handler.file;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

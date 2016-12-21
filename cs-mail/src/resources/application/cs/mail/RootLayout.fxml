@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar prefHeight="0.0" prefWidth="2802.0" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" text="경로선택" />
+              <MenuItem mnemonicParsing="false" text="닫기" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text=",,,,,,,," />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="도움말" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <SplitPane dividerPositions="0.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+        <items>
+            <HBox prefHeight="99.0" prefWidth="1022.0">
+               <children>
+                  <TextField prefHeight="23.0" prefWidth="314.0" />
+                  <Button mnemonicParsing="false" text="검색" />
+               </children>
+            </HBox>
+            <SplitPane dividerPositions="0.26, 0.5" prefHeight="667.0" prefWidth="1022.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="302.0">
+                     <children>
+                        <TreeView AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="100.0">
+                     <children>
+                        <TreeTableView prefHeight="712.0" prefWidth="331.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columns>
+                            <TreeTableColumn prefWidth="75.0" text="C1" />
+                            <TreeTableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TreeTableView>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="588.0" prefWidth="508.0" />
+              </items>
+            </SplitPane>
+        </items>
+      </SplitPane>
+   </center>
+   <bottom>
+      <AnchorPane prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
