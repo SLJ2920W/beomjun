@@ -1,29 +1,15 @@
 package application.cs.mail.handler.file;
 
-import java.nio.file.Path;
-
 import javafx.beans.property.SimpleStringProperty;
 
-public class PathItem {
-	private Path path;
-	private SimpleStringProperty fileName;
-	private SimpleStringProperty filePath;
+public class FileItem {
 
-	public PathItem(Path path) {
-		this.path = path;
-	}
+	private final SimpleStringProperty fileName;
+	private final SimpleStringProperty filePath;
 
-	public Path getPath() {
-		return path;
-	}
-
-	@Override
-	public String toString() {
-		if (path.getFileName() == null) {
-			return path.toString();
-		} else {
-			return path.getFileName().toString();
-		}
+	public FileItem(String fileName, String filePath) {
+		this.fileName = new SimpleStringProperty(fileName);
+		this.filePath = new SimpleStringProperty(filePath);
 	}
 
 	public final SimpleStringProperty fileNameProperty() {
@@ -49,6 +35,5 @@ public class PathItem {
 	public final void setFilePath(final java.lang.String filePath) {
 		this.filePathProperty().set(filePath);
 	}
-
 
 }

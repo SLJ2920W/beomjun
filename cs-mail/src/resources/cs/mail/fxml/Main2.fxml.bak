@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.cs.mail.controller.MainController">
+   <top>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#setMenuBarHandler" text="Open" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <fx:include fx:id="file" source="File.fxml" />
+   </center>
+   <bottom>
+      <HBox prefHeight="30.0" prefWidth="1024.0" BorderPane.alignment="CENTER_LEFT">
+         <children>
+            <Label minWidth="-Infinity" prefHeight="15.0" prefWidth="500.0" text="최종 업데이트 일 : 2017-01-03 화요일 " />
+            <ProgressBar minWidth="-Infinity" progress="0.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </ProgressBar>
+            <Button minWidth="-Infinity" mnemonicParsing="false" text="에러 로그 확인" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

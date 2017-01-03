@@ -18,15 +18,10 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/core-8.0b8.jar"/>
-	<classpathentry kind="lib" path="lib/datafx-8.0b8.jar"/>
-	<classpathentry kind="lib" path="lib/flow-8.0b8.jar"/>
-	<classpathentry kind="lib" path="lib/fontawesomefx-8.0.10.jar"/>
-	<classpathentry kind="lib" path="lib/javassist.jar"/>
-	<classpathentry kind="lib" path="lib/javax.inject.jar"/>
-	<classpathentry kind="lib" path="lib/jfoenix-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/jfxrt.jar"/>
-	<classpathentry kind="lib" path="lib/retrolambda-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/mailapi-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/image4j.jar"/>
+	<classpathentry kind="lib" path="lib/apache-mime4j-core-0.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io.jar"/>
+	<classpathentry kind="lib" path="lib/json-org.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
