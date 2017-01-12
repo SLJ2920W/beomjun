@@ -23,5 +23,8 @@
 	<classpathentry kind="lib" path="lib/apache-mime4j-core-0.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry kind="lib" path="lib/json-org.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-analyzers-common-6.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-6.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-queryparser-6.3.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

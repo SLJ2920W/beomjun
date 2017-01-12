@@ -1,9 +1,13 @@
-package application.cs.mail.handler.file;
+package application.cs.mail.handler.deprecated;
 
 import java.nio.file.Path;
 
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * @deprecated
+ *
+ */
 public class PathItem {
 	private Path path;
 	private SimpleStringProperty fileName;

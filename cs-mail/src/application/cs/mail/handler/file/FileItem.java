@@ -1,39 +1,106 @@
 package application.cs.mail.handler.file;
 
-import javafx.beans.property.SimpleStringProperty;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 
-public class FileItem {
+import application.cs.mail.common.Selection;
+import javafx.beans.property.ReadOnlyLongWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Tooltip;
 
-	private final SimpleStringProperty fileName;
-	private final SimpleStringProperty filePath;
+public class FileItem implements EventHandler<ActionEvent> {
 
-	public FileItem(String fileName, String filePath) {
-		this.fileName = new SimpleStringProperty(fileName);
-		this.filePath = new SimpleStringProperty(filePath);
+	private ReadOnlyObjectWrapper<Hyperlink> filePath = new ReadOnlyObjectWrapper<>(this, "filePath");
+	private ReadOnlyStringWrapper fileName = new ReadOnlyStringWrapper(this, "fileName");
+	private ReadOnlyLongWrapper fileSize = new ReadOnlyLongWrapper(this, "fileSize");
+	private ReadOnlyObjectWrapper<FileTime> fileTime = new ReadOnlyObjectWrapper<>(this, "fileTime");
+	
+	
+	public FileItem(Path home, Path file, BasicFileAttributes attrs) {
+
+		String text = "";
+		if (home == null) {
+			text = file.toString();
+		} else if (home.equals(file)) {
+			text = "..";
+		} else {
+			text = home.relativize(file).toString();
+		}
+		
+		final Hyperlink link = new Hyperlink(text);
+		link.setOnAction(this);
+		link.setTooltip(new Tooltip(file.toString()));
+		link.setUserData(file);
+		filePath.set(link);
+		filePath.get().getText();
+		fileName.set(file.getFileName() == null ? "/" : file.getFileName().toString());
+
+//		Image image = new Image(getClass().getResourceAsStream("labels.jpg"));
+//		Label label3 = new Label("Search", new ImageView(image));
+
+		long size = 0L;
+		FileTime time;
+		try {
+			if (!attrs.isDirectory())
+				size = Files.size(file);
+			time = Files.getLastModifiedTime(file);
+		} catch (IOException | SecurityException e) {
+			size = 0L;
+			time = FileTime.fromMillis(0L);
+		}
+		fileSize.set(size);
+		fileTime.set(time);
+
 	}
 
-	public final SimpleStringProperty fileNameProperty() {
-		return this.fileName;
+	@Override
+	public void handle(ActionEvent e) {
+		final Hyperlink link = (Hyperlink) e.getSource();
+		final Path path = (Path) link.getUserData();
+		if (Files.isDirectory(path))
+			Selection.INSTANCE.setDirectory(path);
+		else
+			Selection.INSTANCE.setDocument(path);
+
 	}
 
-	public final java.lang.String getFileName() {
-		return this.fileNameProperty().get();
+	public Hyperlink getFilePath() {
+		return filePath.get();
 	}
 
-	public final void setFileName(final java.lang.String fileName) {
-		this.fileNameProperty().set(fileName);
+	public String getFileName() {
+		return fileName.get();
 	}
 
-	public final SimpleStringProperty filePathProperty() {
-		return this.filePath;
+	public Long getFileSize() {
+		return fileSize.get();
 	}
 
-	public final java.lang.String getFilePath() {
-		return this.filePathProperty().get();
+	public FileTime getFileTime() {
+		return fileTime.get();
 	}
 
-	public final void setFilePath(final java.lang.String filePath) {
-		this.filePathProperty().set(filePath);
+	public void setFilePath(ReadOnlyObjectWrapper<Hyperlink> filePath) {
+		this.filePath = filePath;
+	}
+
+	public void setFileName(ReadOnlyStringWrapper fileName) {
+		this.fileName = fileName;
+	}
+
+	public void setFileSize(ReadOnlyLongWrapper fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public void setFileTime(ReadOnlyObjectWrapper<FileTime> fileTime) {
+		this.fileTime = fileTime;
 	}
 
 }

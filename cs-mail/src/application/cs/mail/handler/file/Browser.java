@@ -1,6 +1,7 @@
 package application.cs.mail.handler.file;
 
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javafx.geometry.HPos;

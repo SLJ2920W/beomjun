@@ -1,4 +1,4 @@
-package application.cs.mail.handler.file;
+package application.cs.mail.handler.deprecated;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -18,6 +18,7 @@ import javafx.scene.control.TreeItem;
 /**
  * http://docs.oracle.com/javafx/2/api/index.html
  * http://www.java2s.com/Tutorials/Java/JavaFX/0660__JavaFX_Tree_View.htm
+ * @deprecated
  */
 public class PathTreeItem extends TreeItem<PathItem> {
 	private boolean isLeaf = false;
@@ -57,21 +58,21 @@ public class PathTreeItem extends TreeItem<PathItem> {
 
 	// 하위 펼치기 리스트 후 하위에 폴더가 없으면 펼치기 없애기
 	private boolean isSubFolder(String parentPath) {
-		Path dir = null;
-		try {
-			DirectoryStream.Filter<Path> filter2 = (Path file) -> {
-				return !file.getFileName().startsWith(Selection.INSTANCE.getMailViewTempFolderName()) && Files.isDirectory(file);
-			};
-
-			dir = FileSystems.getDefault().getPath(parentPath);
-			DirectoryStream<Path> s = Files.newDirectoryStream(dir, filter2);
-			return s.iterator().hasNext();
-
-		} catch (AccessDeniedException e) {
-			Logger.getLogger(getClass().getName()).log(Level.INFO, "_AccessDenied_" + dir.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		Path dir = null;
+//		try {
+//			DirectoryStream.Filter<Path> filter2 = (Path file) -> {
+//				return !file.getFileName().startsWith(Selection.INSTANCE.getMailViewTempFolderName()) && Files.isDirectory(file);
+//			};
+//
+//			dir = FileSystems.getDefault().getPath(parentPath);
+//			DirectoryStream<Path> s = Files.newDirectoryStream(dir, filter2);
+//			return s.iterator().hasNext();
+//
+//		} catch (AccessDeniedException e) {
+//			Logger.getLogger(getClass().getName()).log(Level.INFO, "_AccessDenied_" + dir.toString());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		return false;
 	}
 

@@ -228,7 +228,9 @@ public class MimeHandler implements ContentHandler {
 				try {
 					output = new BufferedOutputStream(new FileOutputStream(imgFile));
 					IOUtils.copy(bodyStream, output);
-				} finally {
+				} catch(Exception e){
+					System.out.println("에러가 발생 했습니다....\tMimeHandler.java");
+				}finally {
 					 try { if ( output != null ) output.flush(); } catch (Exception e) {}
 					 try { if ( output != null ) output.close(); } catch (Exception e) {}
 				}				

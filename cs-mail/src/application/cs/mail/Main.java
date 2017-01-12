@@ -12,14 +12,11 @@ import java.util.Properties;
 
 import application.cs.mail.common.App;
 import application.cs.mail.common.Selection;
+import application.cs.mail.handler.file.watch.WatchDir;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -98,9 +95,19 @@ public class Main extends Application {
 					Selection.INSTANCE.setSetting(key, props.getProperty(key));
 				}
 			}
+			
+			Selection.INSTANCE.setDirectory(Paths.get(Selection.INSTANCE.getSetting().get("home")));
+			Selection.INSTANCE.setDocument(Paths.get(Selection.INSTANCE.getSetting().get("home")));
+			
+			
+			// 파일 감시 스레드
+//			new WatchDir(Selection.INSTANCE.getDirectory().toString()).call();
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		

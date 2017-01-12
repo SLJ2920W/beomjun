@@ -1,4 +1,4 @@
-package application.cs.mail.handler.file;
+package application.cs.mail.handler.mime;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

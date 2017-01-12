@@ -62,12 +62,6 @@ public class MhtmlDecoder {
 	 * @param imageMap
 	 */
 	public Map<String, String> changeImagePath(Map<String, String> imageMap) {
-//		Set<Entry<String, String>> map = imageMap.entrySet();
-//		Iterator<Entry<String, String>> entry = map.iterator();
-//		while(entry.hasNext()){
-//			Entry<String, String> eg = entry.next();
-//			eg.getKey();eg.getValue();
-//		}
 		if(imageMap == null)
 			return null;
 		
@@ -104,9 +98,11 @@ public class MhtmlDecoder {
 		if ( options.getHeader() != null ) contents.insert(0,options.getHeader());
 		if ( options.getFooter() != null ) contents.append(options.getFooter());
 		
-//		FileUtils.saveContents(decFile, contents.toString());
+		/**
+		 * 일정이 첨부된 메일은 contents 가 null 이 나옴
+		 */
 		// HTML 내용을 교정함
-		String fixedHTML = contents.toString();
+		String fixedHTML = contents == null ? "fail" : contents.toString();
 		if ( options.isHtmlFixForm() ) {
 			boolean delScript = false;
 			fixedHTML = ApFormHtmlFixer.fixFormFieldName(ApFormHtmlFixer.fixDocument(contents.toString(), delScript));
@@ -303,17 +299,21 @@ public class MhtmlDecoder {
 		if("".equals(contents.toString()))
 			return null;
 		String tmpContents = contents.toString();
+		// [s] 2016-12 ~ 2017-01  추가
 		int bodyIdx = tmpContents.toUpperCase().indexOf("<BODY");
+		bodyIdx = bodyIdx < 0 ? 0 : bodyIdx;
 		String headContents = tmpContents.substring(0, bodyIdx);
 		String footContents = tmpContents.substring(bodyIdx, tmpContents.length());
-		// [s] 2016-12 추가
 		headContents = headContents.replaceAll("^<html.*?>", "<html><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
+		if(headContents.equals("")){
+			footContents = footContents.replaceAll("<meta.*?>", "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
+		}
 		footContents = footContents.replaceAll("ks_c_5601-1987", "utf-8");
 		Matcher m = Pattern.compile("<img.*?src=\"").matcher(footContents);
 		if (m.find()){
 			footContents = m.replaceAll(m.group() + Selection.INSTANCE.getMailViewTempFolderName()+"/");
 		}
-		// [e] 2016-12 추가
+		// [e] 2016-12 ~ 2017-01 추가
 		String tempHeadContents = headContents.replaceAll("\"", "'").toUpperCase();		
 		int sIdx = tempHeadContents.indexOf("CONTENT='")+9;
 		int eIdx = tempHeadContents.indexOf("'", sIdx);
