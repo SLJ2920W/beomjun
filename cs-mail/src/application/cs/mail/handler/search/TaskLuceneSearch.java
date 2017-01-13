@@ -18,12 +18,14 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.FSDirectory;
 
 import application.cs.mail.common.Selection;
@@ -32,10 +34,7 @@ import javafx.concurrent.Task;
 
 /**
  * <ul>
- * <li>FX는 UI변경시 Runnable이랑 Task 둘중 하나로 스레드 구현 한다. &lt;E&gt;는 리턴 값을 받을수 있음 ->
- * getClass().getValue() -> &lt;E&gt;</li>
  * <li>생성된 인덱스 기반 검색 html만 검색함</li>
- * <li>기본 예제 응용 하여 적용</li>
  * <li>http://lucene.apache.org/core/6_3_0/index.html</li>
  * <li>http://palpit.tistory.com/773</li>
  * </ul>
@@ -45,15 +44,15 @@ import javafx.concurrent.Task;
  * </code>
  * </pre>
  */
-public class LuceneSearch extends Task<Queue<FileItem>> {
+public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 	private static final String LUCENE_CONTENTS = "contents";
-	// private static final String LUCENE_FILE_NAME = "filename";
-	// private static final String LUCENE_FILE_PATH = "filepath";
+	private static final String LUCENE_FILE_NAME = "filename";
+	private static final String LUCENE_FILE_PATH = "path";
 	private String searchQuery;
 	private String indexPath;
 	private static int SEARCH_LIMIT = 999;
 
-	public LuceneSearch(String searchQuery) {
+	public TaskLuceneSearch(String searchQuery) {
 		this.searchQuery = searchQuery;
 		this.indexPath = Selection.INSTANCE.getDirectory().toString() + File.separator + FileConfig.INDEX_FOLDER;
 	}
@@ -67,7 +66,7 @@ public class LuceneSearch extends Task<Queue<FileItem>> {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 
-			// Term term = new Term(LuceneConstants.CONTENTS, "*답변 드리겠습니다.*");
+			// Term term = new Term(LUCENE_CONTENTS, "*abc*");
 			// Query query = new WildcardQuery(term);
 
 			QueryParser parser = new QueryParser(LUCENE_CONTENTS, analyzer);
@@ -88,7 +87,7 @@ public class LuceneSearch extends Task<Queue<FileItem>> {
 
 			// reader.close();
 
-		} catch (IOException | ParseException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return result;

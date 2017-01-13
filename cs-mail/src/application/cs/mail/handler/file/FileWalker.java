@@ -36,7 +36,7 @@ public class FileWalker {
 	private List<FileItem> files = new ArrayList<FileItem>();
 	private List<FileItem> folders = new ArrayList<FileItem>();
 	private Path home;
-	private Scanner scanner;
+	// private Scanner scanner;
 
 	public static final FileWalker INSTANCE = new FileWalker();
 
@@ -57,7 +57,7 @@ public class FileWalker {
 		// 검색어 존재 함 필터 처리 temp
 		if (isSearch()) {
 			depth = 99;
-			pattern = FileSystems.getDefault().getPathMatcher("glob:" + "*" + searchText + "*" + ".eml");
+			pattern = FileSystems.getDefault().getPathMatcher("glob:" + "*" + searchText + "*");
 			searchType = getSearchType();
 		} else {
 			searchType = SearchType.NONE;
@@ -107,9 +107,6 @@ public class FileWalker {
 
 		} catch (IOException | SecurityException e) {
 			System.err.println(e.toString());
-		} finally {
-			if (scanner != null)
-				scanner.close();
 		}
 	}
 
@@ -135,20 +132,16 @@ public class FileWalker {
 	// 검색 필터
 	private boolean filter(Path file, SearchType searchType) throws IOException {
 		switch (searchType) {
-		case NONE:
-			return file.toString().endsWith(".eml");
 		case TITLE:
 			return pattern.matches(file.getFileName());
-		case CONTENT:
-			scanner = new Scanner(file);
-			if (scanner.findWithinHorizon(searchText, 0) != null) {
-				return true;
-			}
+		// case CONTENT:
+		// scanner = new Scanner(file);
+		// if (scanner.findWithinHorizon(searchText, 0) != null) {
+		// return true;
+		// }
 		default:
-			break;
+			return true;
 		}
-		return false;
-
 	}
 
 	public List<FileItem> getFiles() {

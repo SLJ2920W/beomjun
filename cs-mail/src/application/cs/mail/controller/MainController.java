@@ -38,8 +38,8 @@ public class MainController {
 			// 진행바
 			progressbar.progressProperty().unbind();
 			progressbar.progressProperty().bind(section.progressProperty());
-			progressIndicator.progressProperty().unbind();
-			progressIndicator.progressProperty().bind(section.progressProperty());
+//			progressIndicator.progressProperty().unbind();
+//			progressIndicator.progressProperty().bind(section.progressProperty());
 			message.textProperty().unbind();
 			message.textProperty().bind(section.messageProperty());
 

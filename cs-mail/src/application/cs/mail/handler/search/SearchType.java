@@ -2,28 +2,26 @@ package application.cs.mail.handler.search;
 
 public enum SearchType {
 
-//	NONE("-"), TITLE("제목"), CONTENT("내용");
-	NONE, TITLE, CONTENT;
+	// NONE("-"), TITLE("제목"), CONTENT("내용");
+	TITLE, CONTENT, NONE;
 
-//	private String searchType;
-//
-//	private SearchType(String searchType) {
-//		this.searchType = searchType;
-//	}
-//
-//	@Override
-//	public String toString() {
-//		return searchType;
-//	}
-//
-//	public String getSearchType() {
-//		return searchType;
-//	}
+	// private String searchType;
+	//
+	// private SearchType(String searchType) {
+	// this.searchType = searchType;
+	// }
+	//
+	// @Override
+	// public String toString() {
+	// return searchType;
+	// }
+	//
+	// public String getSearchType() {
+	// return searchType;
+	// }
 
-//	public void setSearchType(String searchType) {
-//		this.searchType = searchType;
-//	}
-	
-	
+	// public void setSearchType(String searchType) {
+	// this.searchType = searchType;
+	// }
 
 }

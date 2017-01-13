@@ -12,7 +12,6 @@ import java.util.Properties;
 
 import application.cs.mail.common.App;
 import application.cs.mail.common.Selection;
-import application.cs.mail.handler.file.watch.WatchDir;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -102,6 +101,10 @@ public class Main extends Application {
 			
 			// 파일 감시 스레드
 //			new WatchDir(Selection.INSTANCE.getDirectory().toString()).call();
+			
+//			DaemonThreadFactory dtf = new DaemonThreadFactory();
+//			ExecutorService service = Executors.newCachedThreadPool(dtf);
+//			service.submit(new HanwhaEml());
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -11,15 +11,21 @@
       <fx:include fx:id="file" source="File.fxml" />
    </center>
    <bottom>
-      <HBox alignment="CENTER_LEFT" prefHeight="37.0" BorderPane.alignment="TOP_RIGHT">
+      <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="1024.0" BorderPane.alignment="TOP_RIGHT">
          <children>
-            <Label fx:id="message" maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="최종 업데이트 일 : 2017-01-03 화요일 " HBox.hgrow="ALWAYS" />
+            <Label fx:id="message" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS" />
             <ProgressBar fx:id="progressbar" minWidth="-Infinity" progress="0.0">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets right="5.0" />
+               </padding>
             </ProgressBar>
-            <ProgressIndicator fx:id="progressIndicator" progress="0.0" rotate="0.6" />
+            <!-- <ProgressIndicator fx:id="progressIndicator" progress="0.0" rotate="0.6" /> -->
          </children>
       </HBox>
    </bottom>

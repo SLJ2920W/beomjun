@@ -26,7 +26,7 @@ import javafx.concurrent.Task;
  * </code>
  * </pre>
  */
-public class HanwhaEml extends Task<Queue<String>> {
+public class TaskChangeToHtml extends Task<Queue<String>> {
 
 	@Override
 	protected Queue<String> call() throws Exception {
@@ -42,7 +42,7 @@ public class HanwhaEml extends Task<Queue<String>> {
 
 	Queue<String> indexDocs(Path path) throws IOException {
 		Queue<String> result = new ConcurrentLinkedQueue<String>();
-		updateMessage(" ");
+		updateMessage("변경 내역 확인중");
 		if (Files.isDirectory(path)) {
 
 			Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
@@ -54,6 +54,8 @@ public class HanwhaEml extends Task<Queue<String>> {
 							// 그룹웨어에서 사용 하는 EML -> HTML 변경
 							updateMessage("변환 중.. "+file.getFileName());
 							MimeUtils.decodeLocalForSearch(file.toFile());
+						} else{
+							updateMessage("확인 중.. "+file.getFileName());
 						}
 					} catch (Exception e) {
 						result.add(file.toFile().toString());

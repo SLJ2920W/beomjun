@@ -1,29 +1,29 @@
 package application.cs.mail.controller.file;
 
-import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
-import java.util.function.Predicate;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import application.cs.mail.common.Selection;
 import application.cs.mail.controller.MainController;
+import application.cs.mail.handler.DaemonThreadFactory;
 import application.cs.mail.handler.file.Browser;
 import application.cs.mail.handler.file.FileItem;
 import application.cs.mail.handler.file.FileWalker;
 import application.cs.mail.handler.mime.MetaData;
-import application.cs.mail.handler.search.HanwhaEml;
-import application.cs.mail.handler.search.LuceneIndex;
-import application.cs.mail.handler.search.LuceneIndex.Mode;
-import application.cs.mail.handler.search.LuceneSearch;
 import application.cs.mail.handler.search.SearchType;
-import application.util.MimeUtils;
+import application.cs.mail.handler.search.TaskChangeToHtml;
+import application.cs.mail.handler.search.TaskLuceneIndex;
+import application.cs.mail.handler.search.TaskLuceneIndex.Mode;
+import application.cs.mail.handler.search.TaskLuceneSearch;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -77,18 +77,7 @@ public class FileController implements Initializable {
 	private ObservableList<FileItem> listMerge = FXCollections.observableArrayList();
 
 	public void init(MainController mainController) {
-		// EML -> HTML 변환함
-		HanwhaEml parse = new HanwhaEml();
-		Thread th = new Thread(parse);
-		th.setDaemon(true);
-		th.start();
-
-		// 스레드에 진행 상태 가져옴
-		Selection.INSTANCE.setProgress(parse.progressProperty().get());
-		// 스레드에 메시지 가져옴
-		parse.messageProperty().addListener((o, oldValue, newValue) -> Selection.INSTANCE.setMessage(parse.messageProperty().get()));
-		// 스레드 이상 없을시 완료 표시만..
-		parse.setOnSucceeded((event) -> Selection.INSTANCE.setProgress(1.0f));
+		defaultThread(); // 파일 변경 내역 확인
 	}
 
 	@Override
@@ -99,22 +88,32 @@ public class FileController implements Initializable {
 		setSearchBox(); // 검색 필드
 		setEvent(); // 이벤트
 	}
+	
+	// temp
+	public void threadStop(ExecutorService  task){
+		task.shutdownNow();
+	}
 
-	// 검색 기타 설정
+	// 파일 변경 내역 확인 eml -> html
+	public void defaultThread() {
+		// EML -> HTML 변환함
+		TaskChangeToHtml task = new TaskChangeToHtml();
+		ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
+		service.submit(task);
+	}
+
+	// 검색 항목 설정
 	public void setSearchBox() {
-		searchComboBox.getItems().addAll(SearchType.values());
+		searchComboBox.getItems().addAll(SearchType.TITLE, SearchType.CONTENT);
 		searchComboBox.getSelectionModel().select(0);
 	}
 
 	// 이벤트 설정
 	public void setEvent() {
-		Selection section = Selection.INSTANCE;
-
 		// 파일 선택 이벤트
-		section.setDocumentListener((observable, oldValue, newValue) -> setFileView(oldValue, newValue));
-
+		Selection.INSTANCE.setDocumentListener((observable, oldValue, newValue) -> setFileView(oldValue, newValue));
 		// 폴더 선택 이벤트
-		section.setDirectoryListener((observable, oldValue, newValue) -> setFileData());
+		Selection.INSTANCE.setDirectoryListener((observable, oldValue, newValue) -> setFileData());
 	}
 
 	@FXML
@@ -125,50 +124,39 @@ public class FileController implements Initializable {
 		FileWalker.INSTANCE.setSearchText(query);
 		FileWalker.INSTANCE.setSearchType(searchComboBox.getSelectionModel().getSelectedItem());
 
-		if ("".equals(query)) {
+		if ("".equals(query) || FileWalker.INSTANCE.getSearchType().equals(SearchType.TITLE)) {
 			setFileData();
 		} else {
-			LuceneSearch search = new LuceneSearch(searchField.getText());
-			search.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			TaskLuceneSearch task = new TaskLuceneSearch(searchField.getText());
+			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent event) {
-					listMerge = FXCollections.observableArrayList(search.getValue());
+					listMerge = FXCollections.observableArrayList(task.getValue());
 					fileListView.setItems(listMerge);
 					fileListView.getSelectionModel().clearSelection();
 				}
 			});
-			startTask(search);
+
+			// 검색 스레드
+			ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
+			service.submit(task);
 		}
 	}
 
-	// 인덱스 관련 temp
+	// 인덱스 관련
 	@FXML
 	public void updateIndex() {
-		// HTML만 인덱스 잡음
-		LuceneIndex indexer = new LuceneIndex(Mode.CREATE);
-
-		// 스레드에 진행 상태 가져옴
-		Selection.INSTANCE.setProgress(indexer.progressProperty().get());
-		// 스레드에 메시지 가져옴
-		indexer.messageProperty().addListener((o, oldValue, newValue) -> Selection.INSTANCE.setMessage(indexer.messageProperty().get()));
-		// 스레드 이상 없을시 완료 표시만..
-		indexer.setOnSucceeded((event) -> Selection.INSTANCE.setProgress(1.0f));
-
-		startTask(indexer);
-	}
-
-	private <V> void startTask(Task<V> task) {
-		// start task
-		Thread thread = new Thread(task);
-		thread.setDaemon(true);
-		thread.start();
+		// HTML만 인덱스 잡음 temp
+		TaskLuceneIndex task = new TaskLuceneIndex(Mode.CREATE);
+		ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
+		service.submit(task);
 	}
 
 	// 파일 컬럼 생성
 	public void setFileColumn() {
 		fileNameColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Hyperlink>("filePath"));
-		fileTitleColumn.setCellValueFactory(new PropertyValueFactory<FileItem, String>("fileName"));
-		fileCommentColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Long>("fileSize"));
+//		fileTitleColumn.setCellValueFactory(new PropertyValueFactory<FileItem, String>("fileName"));
+//		fileCommentColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Long>("fileSize"));
 
 	}
 
@@ -186,33 +174,34 @@ public class FileController implements Initializable {
 	// 파일 내용 보여주기 temp
 	public void setFileView(Path oldValue, Path newValue) {
 		try {
-			// 파일 없으면 처리 
+			// 파일 없으면 처리
 			if (newValue.toFile() == null)
 				return;
-			
+
 			// 중복된 eml은 탭 건너뜀
-//			if (duplicatePrevention.contains(newValue)) {
-//				Path p = newValue;
-//				Tab tab = fileView.getTabs().stream().filter(new Predicate<Tab>() {
-//					@Override
-//					public boolean test(Tab t) {
-//						return t.getId().equals(getTabId(p.getFileName().toString()));
-//					}
-//				}).findFirst().orElse(null);
-//				fileView.getSelectionModel().select(tab);
-//				return;
-//			} else {
-//				duplicatePrevention.add(newValue);
-//			}
+			// if (duplicatePrevention.contains(newValue)) {
+			// Path p = newValue;
+			// Tab tab = fileView.getTabs().stream().filter(new Predicate<Tab>()
+			// {
+			// @Override
+			// public boolean test(Tab t) {
+			// return t.getId().equals(getTabId(p.getFileName().toString()));
+			// }
+			// }).findFirst().orElse(null);
+			// fileView.getSelectionModel().select(tab);
+			// return;
+			// } else {
+			// duplicatePrevention.add(newValue);
+			// }
 
 			// 마임 파싱
-//			File f = MimeUtils.decodeLocalForSearch(newValue.toFile());
+			// File f = MimeUtils.decodeLocalForSearch(newValue.toFile());
 
 			// 탭 타이틀 표시 하기 위해 마임 파싱
 			MetaData meta = new MetaData(newValue);
 			newValue = Paths.get(newValue.toFile().toString().replaceAll(".eml", ".htm"));
 
-			String url = newValue.toString();//f.getCanonicalPath();
+			String url = newValue.toString();// f.getCanonicalPath();
 			tab = new Tab();
 			tab.setClosable(true);
 			tab.setText(meta.getMetaTabTitle());
@@ -252,9 +241,9 @@ public class FileController implements Initializable {
 
 	// 탭에 컨텍스트 메뉴 이벤트 처리 temp
 	public ContextMenu setFileViewContext(Tab tab) {
-		
-//		duplicatePrevention.clear();
-		
+
+		// duplicatePrevention.clear();
+
 		final ContextMenu context = new ContextMenu();
 		MenuItem menu = null;
 

@@ -32,9 +32,7 @@ import javafx.concurrent.Task;
 
 /**
  * <ul>
- * 	<li> FX는 UI변경시 Runnable이랑 Task 둘중 하나로 스레드 구현 한다. &lt;E&gt;는 리턴 값을 받을수 있음 -> getClass().getValue() -> &lt;E&gt; </li>
  * 	<li> 검색을 위한 인덱스 생성 </li>
- * 	<li> 기본 예제 응용 하여 적용 </li>
  * 	<li> http://lucene.apache.org/core/6_3_0/index.html </li>
  * 	<li> http://palpit.tistory.com/773 </li>
  * </ul>
@@ -43,13 +41,13 @@ import javafx.concurrent.Task;
  * </code>
  * </pre>
  */
-public class LuceneIndex extends Task<Boolean> {
+public class TaskLuceneIndex extends Task<Boolean> {
 
 	private Mode mode; // update create
 	private String docsPath;
 	private String indexPath;
 
-	public LuceneIndex(Mode mode) {
+	public TaskLuceneIndex(Mode mode) {
 		this.mode = mode;
 		// 현재 선택한 폴더 경로
 		this.docsPath = Selection.INSTANCE.getDirectory().toString();
@@ -150,6 +148,8 @@ public class LuceneIndex extends Task<Boolean> {
 
 			doc.add(new TextField("contents", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))));
 			
+			Field d = new StringField("filename", file.getFileName().toString(), Field.Store.YES);
+			doc.add(d);
 
 			// [s] progress
 //			int _count = this.count;
