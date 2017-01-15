@@ -25,9 +25,9 @@ import javafx.collections.FXCollections;
  * https://blog.netopyr.com/2012/02/02/creating-read-only-properties-in-javafx/
  */
 public class Selection {
-	// 폴더 리스트 표시중에 제외할 패턴 temp
+	// 폴더 리스트 표시중에 제외할 패턴
 	private List<String> mailViewIgnore = new ArrayList<String>();
-	// 메일 이미지 저장 폴더
+	// 메일 이미지 저장 루트 폴더 
 	private ReadOnlyStringWrapper mailViewTempFolderName = new ReadOnlyStringWrapper("tmp");
 	// 각종 설정 toString으로 확인
 	private final ReadOnlyMapWrapper<String, String> setting = new ReadOnlyMapWrapper<String, String>(FXCollections.observableMap(new HashMap<String, String>()));
@@ -45,7 +45,7 @@ public class Selection {
 	public static final Selection INSTANCE = new Selection();
 
 	public Selection() {
-		// 폴더 리스트 표시중에 제외할 패턴 temp
+		// 폴더 리스트 표시중에 제외할 패턴
 		this.mailViewIgnore.add("tmp");
 		this.mailViewIgnore.add("index");
 	}

@@ -18,14 +18,11 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.FSDirectory;
 
 import application.cs.mail.common.Selection;
@@ -46,8 +43,8 @@ import javafx.concurrent.Task;
  */
 public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 	private static final String LUCENE_CONTENTS = "contents";
-	private static final String LUCENE_FILE_NAME = "filename";
-	private static final String LUCENE_FILE_PATH = "path";
+	// private static final String LUCENE_FILE_NAME = "filename";
+	// private static final String LUCENE_FILE_PATH = "path";
 	private String searchQuery;
 	private String indexPath;
 	private static int SEARCH_LIMIT = 999;
@@ -80,12 +77,10 @@ public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 
 			Query query = parser.parse(searchQuery);
 			updateMessage("검색중 : " + query.toString(LUCENE_CONTENTS));
-			// System.out.println("Searching for: " +
-			// query.toString(LUCENE_CONTENTS));
-
 			result = doSearch(in, searcher, query);
+			updateMessage("검색 완료: " + query.toString(LUCENE_CONTENTS));
 
-			// reader.close();
+			reader.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();

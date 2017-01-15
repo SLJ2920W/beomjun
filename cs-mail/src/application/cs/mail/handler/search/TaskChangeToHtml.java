@@ -53,11 +53,13 @@ public class TaskChangeToHtml extends Task<Queue<String>> {
 						if (filter(file)) {
 							// 그룹웨어에서 사용 하는 EML -> HTML 변경
 							updateMessage("변환 중.. "+file.getFileName());
+							System.out.println("성공 : "+file.toFile());
 							MimeUtils.decodeLocalForSearch(file.toFile());
 						} else{
 							updateMessage("확인 중.. "+file.getFileName());
 						}
 					} catch (Exception e) {
+						System.out.println("실패 : "+file.toFile());
 						result.add(file.toFile().toString());
 						System.out.println("변환 실패 = " + file.toFile());
 					}
@@ -71,7 +73,10 @@ public class TaskChangeToHtml extends Task<Queue<String>> {
 		return result;
 	}
 
-	// 파싱 제외할 규칙 tmp 이름으로 시작 하는 폴더, 파일인 경우 같은 파일 이름 확장자 htm이 아닌 경우
+	/**
+	 * 파싱 제외할 규칙 new Selection생성자에서 정의된 규칙으로 시작 하는 폴더
+	 * 파일인 경우 같은 파일 이름 확장자 htm이 아닌 경우
+	 */
 	private boolean filter(Path file) {
 		if (Files.isDirectory(file)) {
 			long c = Selection.INSTANCE.getMailViewIgnore().stream().filter((e) -> file.getFileName().startsWith(e)).count();

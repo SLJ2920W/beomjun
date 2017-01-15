@@ -12,39 +12,60 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 public class FileItem implements EventHandler<ActionEvent> {
 
 	private ReadOnlyObjectWrapper<Hyperlink> filePath = new ReadOnlyObjectWrapper<>(this, "filePath");
+	private ReadOnlyObjectWrapper<HBox> filePathIcon = new ReadOnlyObjectWrapper<HBox>(this, "filePathIcon");
 	private ReadOnlyStringWrapper fileName = new ReadOnlyStringWrapper(this, "fileName");
 	private ReadOnlyLongWrapper fileSize = new ReadOnlyLongWrapper(this, "fileSize");
 	private ReadOnlyObjectWrapper<FileTime> fileTime = new ReadOnlyObjectWrapper<>(this, "fileTime");
-	
-	
+
 	public FileItem(Path home, Path file, BasicFileAttributes attrs) {
 
 		String text = "";
-		if (home == null) {
+		if (home == null) { // 검색인 경우
 			text = file.toString();
-		} else if (home.equals(file)) {
+		} else if (home.equals(file)) { // 상위 폴더
 			text = "..";
-		} else {
+		} else { // 그외 폴더 및 파일
 			text = home.relativize(file).toString();
 		}
-		
-		final Hyperlink link = new Hyperlink(text);
+
+		// [s] 링크 텍스트
+		Hyperlink link = new Hyperlink(text);
 		link.setOnAction(this);
 		link.setTooltip(new Tooltip(file.toString()));
 		link.setUserData(file);
 		filePath.set(link);
 		filePath.get().getText();
-		fileName.set(file.getFileName() == null ? "/" : file.getFileName().toString());
+		// [e] 링크 텍스트
 
-//		Image image = new Image(getClass().getResourceAsStream("labels.jpg"));
-//		Label label3 = new Label("Search", new ImageView(image));
+		// [s] 이미지 설정
+		String i = attrs.isDirectory() ? "/resources/cs/mail/img/folder.png" : "/resources/cs/mail/img/file.png";
+		Label label = new Label();
+		ImageView bg = new ImageView(new Image(getClass().getResourceAsStream(i)));
+		bg.setFitWidth(20);
+		bg.setPreserveRatio(true);
+		bg.setSmooth(true);
+		bg.setCache(true);
+		label.setGraphic(bg);
+		// [e] 이미지 설정
 
+		HBox box = new HBox();
+		box.setAlignment(Pos.CENTER_LEFT);
+		box.getChildren().add(label);
+		box.getChildren().add(link);
+		filePathIcon.set(box);
+
+		// [s] 기타
 		long size = 0L;
 		FileTime time;
 		try {
@@ -57,6 +78,7 @@ public class FileItem implements EventHandler<ActionEvent> {
 		}
 		fileSize.set(size);
 		fileTime.set(time);
+		// [e] 기타
 
 	}
 
@@ -101,6 +123,14 @@ public class FileItem implements EventHandler<ActionEvent> {
 
 	public void setFileTime(ReadOnlyObjectWrapper<FileTime> fileTime) {
 		this.fileTime = fileTime;
+	}
+
+	public HBox getFilePathIcon() {
+		return filePathIcon.get();
+	}
+
+	public void setFilePathIcon(ReadOnlyObjectWrapper<HBox> filePathIcon) {
+		this.filePathIcon = filePathIcon;
 	}
 
 }

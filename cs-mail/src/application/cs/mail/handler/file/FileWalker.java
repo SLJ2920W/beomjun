@@ -13,9 +13,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import application.cs.mail.common.Selection;
 import application.cs.mail.handler.search.SearchType;
@@ -41,20 +39,26 @@ public class FileWalker {
 	public static final FileWalker INSTANCE = new FileWalker();
 
 	public void createFileTree() {
-		files.clear();
-		folders.clear();
 
 		// 보여줄 경로가 널이면 기본 홈 아니면 선택값
 		Selection section = Selection.INSTANCE;
 		Path sh = section.getDirectory();
 		home = sh == null ? Paths.get(section.getSetting().get("home")) : sh;
 
+		// 시스템 기본 루트 디렉토리면 이동 안함
+		if (home.getNameCount() == 0) {
+			return;
+		}
+
+		files.clear();
+		folders.clear();
+
 		// 파일 구조 트리 _ 하위 서브 트리 구조 단계 - 검색시 높은 값 으로
 		int depth = 1;
-		// null 하면 exception
+		// null로 하면 exception이 나오네
 		Set<FileVisitOption> options = Collections.emptySet();
 
-		// 검색어 존재 함 필터 처리 temp
+		// 검색어 존재 함 필터 처리
 		if (isSearch()) {
 			depth = 99;
 			pattern = FileSystems.getDefault().getPathMatcher("glob:" + "*" + searchText + "*");
@@ -82,7 +86,6 @@ public class FileWalker {
 				// 서브 파일&폴더 접근 시
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-
 					try {
 						// 기본 필터
 						if (defaultFilter(file, attrs))
@@ -96,11 +99,9 @@ public class FileWalker {
 								files.add(new FileItem(home, file, attrs));
 							}
 						}
-
 					} catch (IOException | SecurityException e) {
 						e.printStackTrace();
 					}
-
 					return FileVisitResult.CONTINUE;
 				}
 			});

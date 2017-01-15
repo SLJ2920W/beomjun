@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +21,7 @@ import application.cs.mail.handler.search.TaskChangeToHtml;
 import application.cs.mail.handler.search.TaskLuceneIndex;
 import application.cs.mail.handler.search.TaskLuceneIndex.Mode;
 import application.cs.mail.handler.search.TaskLuceneSearch;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -40,6 +40,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -47,13 +48,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 public class FileController implements Initializable {
 
 	@FXML
 	private TableView<FileItem> fileListView;
 	@FXML
-	private TableColumn<FileItem, Hyperlink> fileNameColumn;
+	private TableColumn<FileItem, HBox> fileNameColumn;
+	@FXML
+	private TableColumn<FileItem, Hyperlink> filePathColumn;
 	@FXML
 	private TableColumn<FileItem, String> fileTitleColumn;
 	@FXML
@@ -128,18 +132,20 @@ public class FileController implements Initializable {
 			setFileData();
 		} else {
 			TaskLuceneSearch task = new TaskLuceneSearch(searchField.getText());
+			// 검색 스레드
+			ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
+			service.submit(task);
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent event) {
 					listMerge = FXCollections.observableArrayList(task.getValue());
 					fileListView.setItems(listMerge);
 					fileListView.getSelectionModel().clearSelection();
+					// 스레드 이상 없을시 종료 표시만..
+					Selection.INSTANCE.setProgress(0.0);
 				}
 			});
 
-			// 검색 스레드
-			ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
-			service.submit(task);
 		}
 	}
 
@@ -154,7 +160,9 @@ public class FileController implements Initializable {
 
 	// 파일 컬럼 생성
 	public void setFileColumn() {
-		fileNameColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Hyperlink>("filePath"));
+		
+		fileNameColumn.setCellValueFactory(new PropertyValueFactory<FileItem, HBox>("filePathIcon"));
+//		filePathColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Hyperlink>("filePath"));
 //		fileTitleColumn.setCellValueFactory(new PropertyValueFactory<FileItem, String>("fileName"));
 //		fileCommentColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Long>("fileSize"));
 
