@@ -5,7 +5,6 @@
     -fx-background-color: transparent;    
     -fx-alignment: CENTER;
     -fx-text-fill: -fx-text-base-color;
-    /*-fx-font-size: 17px;  all the same except this newly added one */
 }
 
 .tab-pane {

@@ -10,6 +10,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import application.cs.mail.Main;
 import application.cs.mail.common.Selection;
 import application.util.MimeUtils;
 import javafx.concurrent.Task;
@@ -27,6 +31,8 @@ import javafx.concurrent.Task;
  * </pre>
  */
 public class TaskChangeToHtml extends Task<Queue<String>> {
+	
+	private static final Logger log = LoggerFactory.getLogger(Main.class);
 
 	@Override
 	protected Queue<String> call() throws Exception {
@@ -53,15 +59,15 @@ public class TaskChangeToHtml extends Task<Queue<String>> {
 						if (filter(file)) {
 							// 그룹웨어에서 사용 하는 EML -> HTML 변경
 							updateMessage("변환 중.. "+file.getFileName());
-							System.out.println("성공 : "+file.toFile());
+//							log.info("성공 : {}" + file.toFile());
 							MimeUtils.decodeLocalForSearch(file.toFile());
 						} else{
+//							log.info("확인중 : {}" + file.toFile());
 							updateMessage("확인 중.. "+file.getFileName());
 						}
 					} catch (Exception e) {
-						System.out.println("실패 : "+file.toFile());
+//						log.info("실패 : {}" + file.toFile());
 						result.add(file.toFile().toString());
-						System.out.println("변환 실패 = " + file.toFile());
 					}
 					return FileVisitResult.CONTINUE;
 				}

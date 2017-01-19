@@ -24,14 +24,17 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import application.cs.mail.common.App;
 import application.cs.mail.common.Selection;
-import application.cs.mail.handler.file.FileItem;
+import application.cs.mail.handler.file.FileBean;
 import javafx.concurrent.Task;
 
 /**
  * <ul>
- * <li>생성된 인덱스 기반 검색 html만 검색함</li>
+ * <li>생성된 인덱스 기반 검색 HTML만 검색함</li>
  * <li>http://lucene.apache.org/core/6_3_0/index.html</li>
  * <li>http://palpit.tistory.com/773</li>
  * </ul>
@@ -41,7 +44,9 @@ import javafx.concurrent.Task;
  * </code>
  * </pre>
  */
-public class TaskLuceneSearch extends Task<Queue<FileItem>> {
+public class TaskLuceneSearch extends Task<Queue<FileBean>> {
+	private static final Logger log = LoggerFactory.getLogger(TaskLuceneSearch.class);
+	
 	private static final String LUCENE_CONTENTS = "contents";
 	// private static final String LUCENE_FILE_NAME = "filename";
 	// private static final String LUCENE_FILE_PATH = "path";
@@ -51,12 +56,12 @@ public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 
 	public TaskLuceneSearch(String searchQuery) {
 		this.searchQuery = searchQuery;
-		this.indexPath = Selection.INSTANCE.getDirectory().toString() + File.separator + FileConfig.INDEX_FOLDER;
+		this.indexPath = Selection.INSTANCE.getDirectory().toString() + File.separator + App.INDEX_FOLDER;
 	}
 
 	@Override
-	protected Queue<FileItem> call() throws Exception {
-		Queue<FileItem> result = null;
+	protected Queue<FileBean> call() throws Exception {
+		Queue<FileBean> result = null;
 		try (IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)))) {
 			IndexSearcher searcher = new IndexSearcher(reader);
 			Analyzer analyzer = new StandardAnalyzer();
@@ -69,7 +74,7 @@ public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 			QueryParser parser = new QueryParser(LUCENE_CONTENTS, analyzer);
 
 			if (searchQuery == null || "".equals(searchQuery)) {
-				System.out.println("??");
+//				log.debug("??");
 				reader.close();
 			}
 
@@ -80,7 +85,7 @@ public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 			result = doSearch(in, searcher, query);
 			updateMessage("검색 완료: " + query.toString(LUCENE_CONTENTS));
 
-			reader.close();
+//			reader.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -88,15 +93,14 @@ public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 		return result;
 	}
 
-	public static Queue<FileItem> doSearch(BufferedReader in, IndexSearcher searcher, Query query) throws IOException {
+	public static Queue<FileBean> doSearch(BufferedReader in, IndexSearcher searcher, Query query) throws IOException {
 
-		Queue<FileItem> result = new ConcurrentLinkedQueue<FileItem>();
+		Queue<FileBean> result = new ConcurrentLinkedQueue<FileBean>();
 
 		TopDocs docs = searcher.search(query, SEARCH_LIMIT);
 		ScoreDoc[] hits = docs.scoreDocs;
 
 		// int numTotalHits = docs.totalHits;
-		// System.out.println(numTotalHits + " total matching documents");
 
 		for (ScoreDoc hit : hits) {
 			Document document = searcher.doc(hit.doc);
@@ -110,9 +114,9 @@ public class TaskLuceneSearch extends Task<Queue<FileItem>> {
 					sb.append(field.name() + ": " + field.stringValue());
 				}
 			}
-			// System.out.println(sb.toString());
+//			log.debug(sb.toString());
 			Path path = Paths.get(title.replaceAll(".htm", ".eml"));
-			result.add(new FileItem(null, path, Files.readAttributes(path, BasicFileAttributes.class)));
+			result.add(new FileBean(null, path, Files.readAttributes(path, BasicFileAttributes.class)));
 		}
 		return result;
 	}

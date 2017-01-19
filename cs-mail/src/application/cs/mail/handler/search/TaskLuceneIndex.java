@@ -26,7 +26,10 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import application.cs.mail.common.App;
 import application.cs.mail.common.Selection;
 import javafx.concurrent.Task;
 
@@ -42,6 +45,8 @@ import javafx.concurrent.Task;
  * </pre>
  */
 public class TaskLuceneIndex extends Task<Boolean> {
+	
+	private static final Logger log = LoggerFactory.getLogger(TaskLuceneIndex.class);
 
 	private Mode mode; // update create
 	private String docsPath;
@@ -52,7 +57,7 @@ public class TaskLuceneIndex extends Task<Boolean> {
 		// 현재 선택한 폴더 경로
 		this.docsPath = Selection.INSTANCE.getDirectory().toString();
 		// 현재 선택한 폴더 경로 + index폴더
-		this.indexPath = Selection.INSTANCE.getDirectory() + File.separator + FileConfig.INDEX_FOLDER;
+		this.indexPath = Selection.INSTANCE.getDirectory() + File.separator + App.INDEX_FOLDER;
 		
 	}
 
@@ -62,7 +67,6 @@ public class TaskLuceneIndex extends Task<Boolean> {
 		final Path docDir = Paths.get(docsPath);
 		if (!Files.isReadable(docDir)) {
 			updateMessage("Document directory '" + docDir.toAbsolutePath() + "' does not exist or is not readable, please check the path");
-//			System.out.println("Document directory '" + docDir.toAbsolutePath() + "' does not exist or is not readable, please check the path");
 			System.exit(1);
 		}
 
@@ -89,11 +93,9 @@ public class TaskLuceneIndex extends Task<Boolean> {
 			writer.close();
 
 			updateMessage("색인 작업 완료");
-//			System.out.println(end.getTime() - start.getTime() + " total milliseconds");
 
 		} catch (IOException e) {
 			updateMessage(" caught a " + e.getClass() + "\n with message: " + e.getMessage());
-//			System.out.println(" caught a " + e.getClass() + "\n with message: " + e.getMessage());
 		}
 
 		return flag;
@@ -157,11 +159,11 @@ public class TaskLuceneIndex extends Task<Boolean> {
 			// [e] progress
 
 			if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
-//				System.out.println("adding " + file);
+//				log.debug("추가 " + file);
 				updateMessage("adding " + file.getFileName());
 				writer.addDocument(doc);
 			} else {
-//				System.out.println("updating " + file);
+//				log.debug("변경 " + file);
 				updateMessage("updating " + file.getFileName());
 				writer.updateDocument(new Term("path", file.toString()), doc);
 			}

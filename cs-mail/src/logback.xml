@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 30초마다 설정 파일의 변경을 확인한다. 파일이 변경되면 다시 로딩한다 -->
+<!-- <configuration scan="true" scanPeriod="30 seconds" debug="true"> -->
+<configuration>
+
+	<!-- https://examples.javacodegeeks.com/enterprise-java/logback/logback-rollingfileappender-example/ -->
+	<!-- http://stackoverflow.com/questions/15911303/how-can-i-configure-logback-conditionally-based-on-context-name -->
+	<!-- https://sonegy.wordpress.com/2014/06/03/235 -->
+
+	<property resource="resources/cs/mail/config/config.properties" />
+	<property name="LOG_HOME" value="c:/logs" />
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern> %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE-ROLLING"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/mailView.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{HH:mm:ss SSS} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/mylog-%d{yyyy-MM-dd}.%i.log.zip
+			</fileNamePattern>
+			<maxFileSize>100MB</maxFileSize>
+			<maxHistory>15</maxHistory>
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+
+<!-- 	<timestamp key="bySecond" datePattern="yyyy-MM-dd_HHmmss" />
+	<appender name="FILE-APPEND" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_HOME}/mailView-${bySecond}.log</file>
+		<append>true</append>
+		<encoder>
+			<pattern> %d{HH:mm:ss SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender> -->
+
+
+	<logger name="application.cs" level="${log.logger.level}">
+		<if condition='isDefined("log.logger.appender")'>
+			<then>
+				<!-- <if condition='property("log.logger.appender").contains("FILE-APPEND")'>
+					<then>
+						<appender-ref ref="FILE-APPEND" />
+					</then>
+				</if> -->
+				<if condition='property("log.logger.appender").contains("FILE-ROLLING")'>
+					<then>
+						<appender-ref ref="FILE-ROLLING" />
+					</then>
+				</if>
+				<if condition='property("log.logger.appender").contains("CONSOLE")'>
+					<then>
+						<appender-ref ref="CONSOLE" />
+					</then>
+				</if>
+			</then>
+			<else>
+				<appender-ref ref="CONSOLE" />
+			</else>
+		</if>
+	</logger>
+
+	<!-- <root level="${log.root.level}">
+		<appender-ref ref="CONSOLE" />
+	</root> -->
+
+
+</configuration>

@@ -13,15 +13,14 @@ import application.cs.mail.common.Selection;
 import application.cs.mail.controller.MainController;
 import application.cs.mail.handler.DaemonThreadFactory;
 import application.cs.mail.handler.file.Browser;
-import application.cs.mail.handler.file.FileItem;
-import application.cs.mail.handler.file.FileWalker;
+import application.cs.mail.handler.file.FileBean;
+import application.cs.mail.handler.file.FileTree;
 import application.cs.mail.handler.mime.MetaData;
 import application.cs.mail.handler.search.SearchType;
 import application.cs.mail.handler.search.TaskChangeToHtml;
 import application.cs.mail.handler.search.TaskLuceneIndex;
 import application.cs.mail.handler.search.TaskLuceneIndex.Mode;
 import application.cs.mail.handler.search.TaskLuceneSearch;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -40,7 +39,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -48,20 +46,19 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 
 public class FileController implements Initializable {
 
 	@FXML
-	private TableView<FileItem> fileListView;
+	private TableView<FileBean> fileListView;
 	@FXML
-	private TableColumn<FileItem, HBox> fileNameColumn;
+	private TableColumn<FileBean, HBox> fileNameColumn;
 	@FXML
-	private TableColumn<FileItem, Hyperlink> filePathColumn;
+	private TableColumn<FileBean, Hyperlink> filePathColumn;
 	@FXML
-	private TableColumn<FileItem, String> fileTitleColumn;
+	private TableColumn<FileBean, String> fileTitleColumn;
 	@FXML
-	private TableColumn<FileItem, Long> fileCommentColumn;
+	private TableColumn<FileBean, Long> fileCommentColumn;
 
 	@FXML
 	private ComboBox<SearchType> searchComboBox;
@@ -78,7 +75,7 @@ public class FileController implements Initializable {
 
 	private ObservableList<Node> textFileData = FXCollections.observableArrayList();
 	private ObservableList<Path> duplicatePrevention = FXCollections.observableArrayList();
-	private ObservableList<FileItem> listMerge = FXCollections.observableArrayList();
+	private ObservableList<FileBean> listMerge = FXCollections.observableArrayList();
 
 	public void init(MainController mainController) {
 		defaultThread(); // 파일 변경 내역 확인
@@ -98,7 +95,7 @@ public class FileController implements Initializable {
 		task.shutdownNow();
 	}
 
-	// 파일 변경 내역 확인 eml -> html
+	// 파일 변경 내역 확인 EML -> HTML
 	public void defaultThread() {
 		// EML -> HTML 변환함
 		TaskChangeToHtml task = new TaskChangeToHtml();
@@ -125,10 +122,10 @@ public class FileController implements Initializable {
 		String query = searchField.getText();
 
 		// 검색어와 검색 조건
-		FileWalker.INSTANCE.setSearchText(query);
-		FileWalker.INSTANCE.setSearchType(searchComboBox.getSelectionModel().getSelectedItem());
+		FileTree.INSTANCE.setSearchText(query);
+		FileTree.INSTANCE.setSearchType(searchComboBox.getSelectionModel().getSelectedItem());
 
-		if ("".equals(query) || FileWalker.INSTANCE.getSearchType().equals(SearchType.TITLE)) {
+		if ("".equals(query) || FileTree.INSTANCE.getSearchType().equals(SearchType.TITLE)) {
 			setFileData();
 		} else {
 			TaskLuceneSearch task = new TaskLuceneSearch(searchField.getText());
@@ -161,19 +158,19 @@ public class FileController implements Initializable {
 	// 파일 컬럼 생성
 	public void setFileColumn() {
 		
-		fileNameColumn.setCellValueFactory(new PropertyValueFactory<FileItem, HBox>("filePathIcon"));
-//		filePathColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Hyperlink>("filePath"));
-//		fileTitleColumn.setCellValueFactory(new PropertyValueFactory<FileItem, String>("fileName"));
-//		fileCommentColumn.setCellValueFactory(new PropertyValueFactory<FileItem, Long>("fileSize"));
+		fileNameColumn.setCellValueFactory(new PropertyValueFactory<FileBean, HBox>("filePathIcon"));
+//		filePathColumn.setCellValueFactory(new PropertyValueFactory<FileBean, Hyperlink>("filePath"));
+//		fileTitleColumn.setCellValueFactory(new PropertyValueFactory<FileBean, String>("fileName"));
+//		fileCommentColumn.setCellValueFactory(new PropertyValueFactory<FileBean, Long>("fileSize"));
 
 	}
 
 	// 파일 데이터 생성
 	public void setFileData() {
-		FileWalker.INSTANCE.createFileTree();
+		FileTree.INSTANCE.createFileTree();
 		listMerge.clear();
-		listMerge.addAll(FileWalker.INSTANCE.getFolders());
-		listMerge.addAll(FileWalker.INSTANCE.getFiles());
+		listMerge.addAll(FileTree.INSTANCE.getFolders());
+		listMerge.addAll(FileTree.INSTANCE.getFiles());
 		fileListView.setItems(listMerge);
 		fileListView.getSelectionModel().clearSelection();
 

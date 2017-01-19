@@ -19,12 +19,7 @@ import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import application.cs.mail.handler.DaemonThreadFactory;
-import application.cs.mail.handler.search.TaskChangeToHtml;
 
 /**
  * jdk8 sample code 참조 -> WatchDir.java

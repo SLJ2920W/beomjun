@@ -20,7 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
-public class FileItem implements EventHandler<ActionEvent> {
+public class FileBean implements EventHandler<ActionEvent> {
 
 	private ReadOnlyObjectWrapper<Hyperlink> filePath = new ReadOnlyObjectWrapper<>(this, "filePath");
 	private ReadOnlyObjectWrapper<HBox> filePathIcon = new ReadOnlyObjectWrapper<HBox>(this, "filePathIcon");
@@ -28,7 +28,7 @@ public class FileItem implements EventHandler<ActionEvent> {
 	private ReadOnlyLongWrapper fileSize = new ReadOnlyLongWrapper(this, "fileSize");
 	private ReadOnlyObjectWrapper<FileTime> fileTime = new ReadOnlyObjectWrapper<>(this, "fileTime");
 
-	public FileItem(Path home, Path file, BasicFileAttributes attrs) {
+	public FileBean(Path home, Path file, BasicFileAttributes attrs) {
 
 		String text = "";
 		if (home == null) { // 검색인 경우

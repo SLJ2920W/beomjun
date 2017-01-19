@@ -1,17 +1,11 @@
 package application.cs.mail;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import application.cs.mail.common.App;
-import application.cs.mail.common.Selection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,9 +13,18 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+	
+	public static final Logger log = LoggerFactory.getLogger(Main.class);
 
 	@Override
 	public void start(Stage primaryStage) {
+		
+//        log.trace("trace");
+//        log.debug("debug");
+//        log.info("info");
+//        log.warn("warn");
+//        log.error("error");
+		
 		// [s]
 		primaryStage.getIcons().add(App.applicationIcon()); // 아이콘
 		primaryStage.setTitle("메일 뷰어"); // 타이틀
@@ -52,52 +55,11 @@ public class Main extends Application {
 
 	}
 
-	// 기본 경로 설정 -> 내문서 폴더
-	public static Path getDefaultPath() {
-		String home = System.getProperty("user.home") + File.separator + "Documents";
-		Path path = Paths.get(home);
-
-		if (Files.notExists(path)) {
-			path = Paths.get(System.getProperty("user.home"));
-		}
-
-		return path;
-	}
-
 	@Override
 	public void init() {
-		Properties props = new Properties();
-
-		String iniFolderPath = getDefaultPath().toString();
-		String iniFolderName = "메일뷰어";
-		String iniFileName = "setting.properties";
-		Path iniFilePath = Paths.get(iniFolderPath + File.separator + iniFolderName + File.separator + iniFileName);
-		Selection.INSTANCE.setSetting("configFilePath", iniFilePath.toString());
 
 		try {
-			// 내문서에 메일뷰어/setting 파일이 없다면..
-			if (Files.notExists(iniFilePath)) {
-				Files.createDirectories(iniFilePath.getParent());
-				// properties파일에 기본홈을 내문서로 초기화
-				props.setProperty("home", iniFolderPath);
-				props.store(Files.newOutputStream(iniFilePath), null);
-				
-				Selection.INSTANCE.setSetting("home", iniFolderPath);
-			} else { // 메일 뷰어 폴더가 있다면 설정값을 맵핑
-				try (InputStream stream = Files.newInputStream(iniFilePath)) {
-					props.load(stream);
-				}
-				Enumeration<Object> en = props.keys();
-				while (en.hasMoreElements()) {
-					String key = (String) en.nextElement();
-					// 설정을 초기화
-					Selection.INSTANCE.setSetting(key, props.getProperty(key));
-				}
-			}
-			
-			Selection.INSTANCE.setDirectory(Paths.get(Selection.INSTANCE.getSetting().get("home")));
-			Selection.INSTANCE.setDocument(Paths.get(Selection.INSTANCE.getSetting().get("home")));
-			
+			App.init();
 			
 			// 파일 감시 스레드
 //			new WatchDir(Selection.INSTANCE.getDirectory().toString()).call();
@@ -106,10 +68,6 @@ public class Main extends Application {
 //			ExecutorService service = Executors.newCachedThreadPool(dtf);
 //			service.submit(new HanwhaEml());
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

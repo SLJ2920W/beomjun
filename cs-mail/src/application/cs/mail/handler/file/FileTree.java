@@ -25,18 +25,18 @@ import application.cs.mail.handler.search.SearchType;
  * @author
  *
  */
-public class FileWalker {
+public class FileTree {
 
 	private PathMatcher pattern;
 	private boolean isSearch = false;
 	private String searchText;
 	private SearchType searchType;
-	private List<FileItem> files = new ArrayList<FileItem>();
-	private List<FileItem> folders = new ArrayList<FileItem>();
+	private List<FileBean> files = new ArrayList<FileBean>();
+	private List<FileBean> folders = new ArrayList<FileBean>();
 	private Path home;
 	// private Scanner scanner;
 
-	public static final FileWalker INSTANCE = new FileWalker();
+	public static final FileTree INSTANCE = new FileTree();
 
 	public void createFileTree() {
 
@@ -75,7 +75,7 @@ public class FileWalker {
 				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 					if (!isSearch()) {
 						// 검색 아닐 경우 상위로 이동 표시
-						folders.add(new FileItem(dir.getParent(), dir.getParent(), attrs));
+						folders.add(new FileBean(dir.getParent(), dir.getParent(), attrs));
 					}
 
 					if (!Files.isHidden(dir))
@@ -92,11 +92,11 @@ public class FileWalker {
 							return FileVisitResult.CONTINUE;
 
 						if (Files.isDirectory(file)) {
-							folders.add(new FileItem(home, file, attrs));
+							folders.add(new FileBean(home, file, attrs));
 						} else {
 							// 검색 필터
 							if (filter(file, searchType)) {
-								files.add(new FileItem(home, file, attrs));
+								files.add(new FileBean(home, file, attrs));
 							}
 						}
 					} catch (IOException | SecurityException e) {
@@ -145,19 +145,19 @@ public class FileWalker {
 		}
 	}
 
-	public List<FileItem> getFiles() {
+	public List<FileBean> getFiles() {
 		return files;
 	}
 
-	public List<FileItem> getFolders() {
+	public List<FileBean> getFolders() {
 		return folders;
 	}
 
-	public void setFiles(List<FileItem> files) {
+	public void setFiles(List<FileBean> files) {
 		this.files = files;
 	}
 
-	public void setFolders(List<FileItem> folders) {
+	public void setFolders(List<FileBean> folders) {
 		this.folders = folders;
 	}
 

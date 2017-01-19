@@ -1,6 +1,5 @@
 package application.cs.mail.common;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,26 +90,11 @@ public class Selection {
 	}
 
 	public void setDirectory(Path dir) {
-		if (dir == null)
-			return;
-		dir = dir.toAbsolutePath();
-
-		if (Files.exists(dir) && !Files.isDirectory(dir))
-			dir = dir.getParent();
-
-		if (dir == null || !Files.exists(dir) || !Files.isDirectory(dir)) {
-		}
-
 		this.directory.set(dir);
 	}
 
 	public void setDocument(Path dir) {
-		if (dir == null)
-			return;
-		dir = dir.toAbsolutePath();
-
-		if (!Files.isDirectory(dir))
-			document.set(dir);
+		this.document.set(dir);
 	}
 
 	public final javafx.beans.property.ReadOnlyObjectProperty<java.nio.file.Path> directoryProperty() {
