@@ -142,7 +142,6 @@ public class FileController implements Initializable {
 					Selection.INSTANCE.setProgress(0.0);
 				}
 			});
-
 		}
 	}
 

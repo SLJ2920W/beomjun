@@ -31,11 +31,11 @@ public class FileBean implements EventHandler<ActionEvent> {
 	public FileBean(Path home, Path file, BasicFileAttributes attrs) {
 
 		String text = "";
-		if (home == null) { // 검색인 경우
+		if (home == null) { // 검색인 경우 전체 경로 보여짐
 			text = file.toString();
-		} else if (home.equals(file)) { // 상위 폴더
+		} else if (home.equals(file)) { // 상위 폴더 이동 기능
 			text = "..";
-		} else { // 그외 폴더 및 파일
+		} else { // 그외 상대경로 형태로 폴더 및 파일 보여짐
 			text = home.relativize(file).toString();
 		}
 
@@ -48,7 +48,7 @@ public class FileBean implements EventHandler<ActionEvent> {
 		filePath.get().getText();
 		// [e] 링크 텍스트
 
-		// [s] 이미지 설정
+		// [s] 파일 및 폴더 이미지 설정
 		String i = attrs.isDirectory() ? "/resources/cs/mail/img/folder.png" : "/resources/cs/mail/img/file.png";
 		Label label = new Label();
 		ImageView bg = new ImageView(new Image(getClass().getResourceAsStream(i)));
@@ -57,7 +57,7 @@ public class FileBean implements EventHandler<ActionEvent> {
 		bg.setSmooth(true);
 		bg.setCache(true);
 		label.setGraphic(bg);
-		// [e] 이미지 설정
+		// [e] 파일 및 폴더 이미지 설정
 
 		HBox box = new HBox();
 		box.setAlignment(Pos.CENTER_LEFT);
@@ -82,10 +82,12 @@ public class FileBean implements EventHandler<ActionEvent> {
 
 	}
 
+	// 하이퍼 링크 선택시 이벤트 처리
 	@Override
 	public void handle(ActionEvent e) {
 		final Hyperlink link = (Hyperlink) e.getSource();
 		final Path path = (Path) link.getUserData();
+		// 현재 경로에 해당 하는 파일 및 폴더를 맵핑 함 (이벤트 처리 하기 위함)
 		if (Files.isDirectory(path))
 			Selection.INSTANCE.setDirectory(path);
 		else

@@ -1,7 +1,6 @@
 package application.cs.mail.handler.file;
 
 import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javafx.geometry.HPos;
@@ -18,7 +17,6 @@ public class Browser extends Region {
 	private final WebEngine webEngine = webView.getEngine();
 
 	public Browser() {
-//		getStyleClass().add("browser");
 		webEngine.load("http://hanwha.eagleoffice.co.kr");
 		getChildren().add(webView);
 

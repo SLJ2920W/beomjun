@@ -45,7 +45,7 @@ public class FileTree {
 		Path sh = section.getDirectory();
 		home = sh == null ? Paths.get(section.getSetting().get("home")) : sh;
 
-		// 시스템 기본 루트 디렉토리면 이동 안함
+		// 시스템 기본 루트 디렉토리면 이동 안함 c드라이브 d드라이브 등등
 		if (home.getNameCount() == 0) {
 			return;
 		}
@@ -87,14 +87,14 @@ public class FileTree {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					try {
-						// 기본 필터
+						// 기본 필터 확인 후 아래 조건으로 
 						if (defaultFilter(file, attrs))
 							return FileVisitResult.CONTINUE;
 
-						if (Files.isDirectory(file)) {
+						if (Files.isDirectory(file)) { // 폴더인 경우
 							folders.add(new FileBean(home, file, attrs));
-						} else {
-							// 검색 필터
+						} else { // 파일인 경우
+							// 검색인 경우 검색 필터 확인
 							if (filter(file, searchType)) {
 								files.add(new FileBean(home, file, attrs));
 							}
@@ -124,7 +124,7 @@ public class FileTree {
 		if (Files.isDirectory(file)) {
 			// 리스트에 제외할 규칙
 			long c = Selection.INSTANCE.getMailViewIgnore().stream().filter((e) -> file.getFileName().startsWith(e)).count();
-			if (c == 0)
+			if (c == 0)	// 제외 대상에 포함 하지 않으면 false
 				return false;
 		}
 		return true;
