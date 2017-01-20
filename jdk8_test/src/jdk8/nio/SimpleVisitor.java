@@ -61,7 +61,7 @@ public class SimpleVisitor {
 
 	public static void main(String[] args) {
 		try {
-			Path path = Paths.get("D:\\GMZ6TR6Q.K6V");
+			Path path = Paths.get("D:\\sdf");
 			ListFiles listFiles = new ListFiles();
 			Files.walkFileTree(path, listFiles);
 		} catch (IOException ex) {

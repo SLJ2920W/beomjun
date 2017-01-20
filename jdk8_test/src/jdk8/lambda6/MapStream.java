@@ -1,5 +1,6 @@
 package jdk8.lambda6;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,11 +16,11 @@ public class MapStream {
 		imageMap.put("sfdjklvj05", "2016-07-17 121706_정보배_38기 신입사원 Action Learning 관련 설문/2016-07-17 121706_정보배_38기 신입사원 Action Learning 관련 설문.jpg");
 		imageMap.put("sfdjklvj06", "2016-07-17 121706_정보배_39기 신입사원 Action Learning 관련 설문/2016-07-17 121706_정보배_39기 신입사원 Action Learning 관련 설문.jpg");
 		imageMap.put("sfdjklvj07", "2016-07-17 121706_정보배_40기 신입사원 Action Learning 관련 설문/2016-07-17 121706_정보배_40기 신입사원 Action Learning 관련 설문.jpg");
-		
-		Map<String, String> changeImageMap = imageMap.entrySet().stream().collect(Collectors.toMap(p -> p.getKey(), p -> "PPP" + p.getValue() + "HHO"));
-		
-//		System.out.println(changeImageMap);
-		
+
+		Map<String, String> changeImageMap = imageMap.entrySet().stream().collect(Collectors.toMap(p -> p.getKey(), p -> "temp" + File.separator + p.getValue()));
+
+		// System.out.println(changeImageMap);
+
 		changeImageMap.entrySet().stream().forEach(System.out::println);
 
 	}

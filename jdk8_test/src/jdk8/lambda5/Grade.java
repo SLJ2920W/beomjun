@@ -13,7 +13,7 @@ public enum Grade {
 	public void setGrade(String grade) {
 		this.grade = grade;
 	}
-
+ 
 	private Grade(String grade) {
 		this.grade = grade;
 	}
