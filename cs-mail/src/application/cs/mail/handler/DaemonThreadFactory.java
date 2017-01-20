@@ -26,11 +26,11 @@ public class DaemonThreadFactory implements ThreadFactory {
 	public DaemonThreadFactory(Task<?> task) {
 //		log.debug(task.getState().toString());
 		// 스레드에 진행 상태 가져옴
-		Selection.INSTANCE.setProgress(task.progressProperty().get());
+		Selection.getInstance().setProgress(task.progressProperty().get());
 		// 스레드에 메시지 가져옴
-		task.messageProperty().addListener((o, oldValue, newValue) -> Selection.INSTANCE.setMessage(task.messageProperty().get()));
+		task.messageProperty().addListener((o, oldValue, newValue) -> Selection.getInstance().setMessage(task.messageProperty().get()));
 		// 스레드 이상 없을시 종료 표시만..
-		task.setOnSucceeded((event) -> Selection.INSTANCE.setProgress(0));
+		task.setOnSucceeded((event) -> Selection.getInstance().setProgress(0));
 	}
 
 	@Override

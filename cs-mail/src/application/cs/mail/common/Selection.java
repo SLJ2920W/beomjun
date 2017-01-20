@@ -17,6 +17,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * http://www.dummies.com/programming/java/how-to-create-a-read-only-property-in
@@ -25,15 +26,15 @@ import javafx.collections.FXCollections;
  */
 public class Selection {
 	// 폴더 리스트 표시중에 제외할 패턴
-	private List<String> mailViewIgnore = new ArrayList<String>();
-	// 메일 이미지 저장 루트 폴더 
+	private List<String> mailViewIgnore = new ArrayList<>();
+	// 메일 이미지 저장 루트 폴더
 	private ReadOnlyStringWrapper mailViewTempFolderName = new ReadOnlyStringWrapper("tmp");
 	// 각종 설정 toString으로 확인
-	private final ReadOnlyMapWrapper<String, String> setting = new ReadOnlyMapWrapper<String, String>(FXCollections.observableMap(new HashMap<String, String>()));
+	private final ReadOnlyMapWrapper<String, String> setting = new ReadOnlyMapWrapper<>(FXCollections.observableMap(new HashMap<String, String>()));
 	// 선택한 디렉토리
-	private final ReadOnlyObjectWrapper<Path> directory = new ReadOnlyObjectWrapper<Path>(this, "directory");
+	private final ReadOnlyObjectWrapper<Path> directory = new ReadOnlyObjectWrapper<>(this, "directory");
 	// 선택한 문서
-	private final ReadOnlyObjectWrapper<Path> document = new ReadOnlyObjectWrapper<Path>(this, "document");
+	private final ReadOnlyObjectWrapper<Path> document = new ReadOnlyObjectWrapper<>(this, "document");
 	// 진행 상태
 	private DoubleProperty progress = new SimpleDoubleProperty(0.0);
 	private StringProperty message = new SimpleStringProperty("");
@@ -41,7 +42,28 @@ public class Selection {
 	private List<ChangeListener<Path>> directoryListener = new ArrayList<ChangeListener<Path>>();
 	private List<ChangeListener<Path>> documentListener = new ArrayList<ChangeListener<Path>>();
 
-	public static final Selection INSTANCE = new Selection();
+	private ObservableList<Path> duplicatePrevention = FXCollections.observableArrayList();
+
+	public ObservableList<Path> getDuplicatePrevention() {
+		return duplicatePrevention;
+	}
+
+	public void setDuplicatePrevention(Path duplicatePrevention) {
+		this.duplicatePrevention.add(duplicatePrevention);
+	}
+
+	private volatile static Selection instance;
+
+	public static Selection getInstance() {
+		if (instance == null) {
+			synchronized (Selection.class) {
+				if (instance == null) {
+					instance = new Selection();
+				}
+			}
+		}
+		return instance;
+	}
 
 	public Selection() {
 		// 폴더 리스트 표시중에 제외할 패턴

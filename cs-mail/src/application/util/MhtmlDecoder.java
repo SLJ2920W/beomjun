@@ -67,7 +67,7 @@ public class MhtmlDecoder {
 		
 		Map<String, String> changeImageMap = 
 				imageMap.entrySet().stream()
-				.collect(Collectors.toMap(p -> p.getKey(), p -> Selection.INSTANCE.getMailViewTempFolderName() + File.separator + p.getValue()));
+				.collect(Collectors.toMap(p -> p.getKey(), p -> Selection.getInstance().getMailViewTempFolderName() + File.separator + p.getValue()));
 		
 		return changeImageMap;
 	}
@@ -286,7 +286,7 @@ public class MhtmlDecoder {
 		if ( ! targetFile.getParentFile().exists() ) {
 			targetFile.getParentFile().mkdirs();
 		}
-		return new File(targetFile.getParentFile() + File.separator + Selection.INSTANCE.getMailViewTempFolderName(), FileNameUtils.trimExtension(targetFile.getName()));
+		return new File(targetFile.getParentFile() + File.separator + Selection.getInstance().getMailViewTempFolderName(), FileNameUtils.trimExtension(targetFile.getName()));
 	}
 	
 	/**
@@ -311,7 +311,7 @@ public class MhtmlDecoder {
 		footContents = footContents.replaceAll("ks_c_5601-1987", "utf-8");
 		Matcher m = Pattern.compile("<img.*?src=\"").matcher(footContents);
 		if (m.find()){
-			footContents = m.replaceAll(m.group() + Selection.INSTANCE.getMailViewTempFolderName()+"/");
+			footContents = m.replaceAll(m.group() + Selection.getInstance().getMailViewTempFolderName()+"/");
 		}
 		// [e] 2016-12 ~ 2017-01 추가
 		String tempHeadContents = headContents.replaceAll("\"", "'").toUpperCase();		

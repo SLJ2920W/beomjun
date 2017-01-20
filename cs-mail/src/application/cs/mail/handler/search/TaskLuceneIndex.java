@@ -55,9 +55,9 @@ public class TaskLuceneIndex extends Task<Boolean> {
 	public TaskLuceneIndex(Mode mode) {
 		this.mode = mode;
 		// 현재 선택한 폴더 경로
-		this.docsPath = Selection.INSTANCE.getDirectory().toString();
+		this.docsPath = Selection.getInstance().getDirectory().toString();
 		// 현재 선택한 폴더 경로 + index폴더
-		this.indexPath = Selection.INSTANCE.getDirectory() + File.separator + App.INDEX_FOLDER;
+		this.indexPath = Selection.getInstance().getDirectory() + File.separator + App.INDEX_FOLDER;
 		
 	}
 
@@ -120,6 +120,7 @@ public class TaskLuceneIndex extends Task<Boolean> {
 							indexDoc(writer, file, attrs.lastModifiedTime().toMillis());
 						}
 					} catch (IOException | InterruptedException ignore) {
+						log.error(ignore.toString());
 					}
 					return FileVisitResult.CONTINUE;
 				}
@@ -159,11 +160,11 @@ public class TaskLuceneIndex extends Task<Boolean> {
 			// [e] progress
 
 			if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
-//				log.debug("추가 " + file);
+				log.info("추가 " + file);
 				updateMessage("adding " + file.getFileName());
 				writer.addDocument(doc);
 			} else {
-//				log.debug("변경 " + file);
+				log.info("변경 " + file);
 				updateMessage("updating " + file.getFileName());
 				writer.updateDocument(new Term("path", file.toString()), doc);
 			}

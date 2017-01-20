@@ -61,7 +61,7 @@ public class PathTreeItem extends TreeItem<PathItem> {
 //		Path dir = null;
 //		try {
 //			DirectoryStream.Filter<Path> filter2 = (Path file) -> {
-//				return !file.getFileName().startsWith(Selection.INSTANCE.getMailViewTempFolderName()) && Files.isDirectory(file);
+//				return !file.getFileName().startsWith(Selection.getInstance().getMailViewTempFolderName()) && Files.isDirectory(file);
 //			};
 //
 //			dir = FileSystems.getDefault().getPath(parentPath);

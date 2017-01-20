@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.input.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -34,7 +35,10 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#setMenuBarHandler" text="Open" />
+              <MenuItem mnemonicParsing="false" onAction="#setMenuBarHandler" text="Open">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="ENTER" control="UP" meta="UP" shift="ANY" shortcut="UP" />
+                     </accelerator></MenuItem>
             </items>
           </Menu>
         </menus>

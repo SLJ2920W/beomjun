@@ -56,7 +56,7 @@ public class TaskLuceneSearch extends Task<Queue<FileBean>> {
 
 	public TaskLuceneSearch(String searchQuery) {
 		this.searchQuery = searchQuery;
-		this.indexPath = Selection.INSTANCE.getDirectory().toString() + File.separator + App.INDEX_FOLDER;
+		this.indexPath = Selection.getInstance().getDirectory().toString() + File.separator + App.INDEX_FOLDER;
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class TaskLuceneSearch extends Task<Queue<FileBean>> {
 			QueryParser parser = new QueryParser(LUCENE_CONTENTS, analyzer);
 
 			if (searchQuery == null || "".equals(searchQuery)) {
-//				log.debug("??");
+//				log.error("??");
 				reader.close();
 			}
 
@@ -114,7 +114,7 @@ public class TaskLuceneSearch extends Task<Queue<FileBean>> {
 					sb.append(field.name() + ": " + field.stringValue());
 				}
 			}
-//			log.debug(sb.toString());
+//			log.info(sb.toString());
 			Path path = Paths.get(title.replaceAll(".htm", ".eml"));
 			result.add(new FileBean(null, path, Files.readAttributes(path, BasicFileAttributes.class)));
 		}

@@ -34,14 +34,24 @@ public class FileTree {
 	private List<FileBean> files = new ArrayList<FileBean>();
 	private List<FileBean> folders = new ArrayList<FileBean>();
 	private Path home;
-	// private Scanner scanner;
 
-	public static final FileTree INSTANCE = new FileTree();
+	private volatile static FileTree instance;
+
+	public static FileTree getInstance() {
+		if (instance == null) {
+			synchronized (FileTree.class) {
+				if (instance == null) {
+					instance = new FileTree();
+				}
+			}
+		}
+		return instance;
+	}
 
 	public void createFileTree() {
 
 		// 보여줄 경로가 널이면 기본 홈 아니면 선택값
-		Selection section = Selection.INSTANCE;
+		Selection section = Selection.getInstance();
 		Path sh = section.getDirectory();
 		home = sh == null ? Paths.get(section.getSetting().get("home")) : sh;
 
@@ -123,7 +133,7 @@ public class FileTree {
 		}
 		if (Files.isDirectory(file)) {
 			// 리스트에 제외할 규칙
-			long c = Selection.INSTANCE.getMailViewIgnore().stream().filter((e) -> file.getFileName().startsWith(e)).count();
+			long c = Selection.getInstance().getMailViewIgnore().stream().filter((e) -> file.getFileName().startsWith(e)).count();
 			if (c == 0)	// 제외 대상에 포함 하지 않으면 false
 				return false;
 		}

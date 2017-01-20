@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,7 @@ import application.cs.mail.handler.DaemonThreadFactory;
 import application.cs.mail.handler.file.Browser;
 import application.cs.mail.handler.file.FileBean;
 import application.cs.mail.handler.file.FileTree;
+import application.cs.mail.handler.menu.TabWalker;
 import application.cs.mail.handler.mime.MetaData;
 import application.cs.mail.handler.search.SearchType;
 import application.cs.mail.handler.search.TaskChangeToHtml;
@@ -23,9 +25,6 @@ import application.cs.mail.handler.search.TaskLuceneIndex.Mode;
 import application.cs.mail.handler.search.TaskLuceneSearch;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -49,6 +48,8 @@ import javafx.scene.layout.VBox;
 
 public class FileController implements Initializable {
 
+	Selection selection = Selection.getInstance();
+
 	@FXML
 	private TableView<FileBean> fileListView;
 	@FXML
@@ -70,28 +71,35 @@ public class FileController implements Initializable {
 	private TextField searchField;
 
 	@FXML
-	private TabPane fileView;
+	private TabPane tabPane;
 	private Tab tab;
 
 	private ObservableList<Node> textFileData = FXCollections.observableArrayList();
-	private ObservableList<Path> duplicatePrevention = FXCollections.observableArrayList();
+//	public ObservableList<Path> duplicatePrevention = FXCollections.observableArrayList();
 	private ObservableList<FileBean> listMerge = FXCollections.observableArrayList();
 
 	public void init(MainController mainController) {
 		defaultThread(); // 파일 변경 내역 확인
+
+		// duplicatePrevention.addListener(new ListChangeListener<Path>() {
+		// @Override
+		// public void onChanged(javafx.collections.ListChangeListener.Change<?
+		// extends Path> c) {
+		// System.out.println(1);
+		// }
+		// });
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 		setFileColumn(); // 테이블 컬럼
 		setFileData(); // 테이블 데이터
 		setSearchBox(); // 검색 필드
 		setEvent(); // 이벤트
 	}
-	
+
 	// temp
-	public void threadStop(ExecutorService  task){
+	public void threadStop(ExecutorService task) {
 		task.shutdownNow();
 	}
 
@@ -112,35 +120,31 @@ public class FileController implements Initializable {
 	// 이벤트 설정
 	public void setEvent() {
 		// 파일 선택 이벤트
-		Selection.INSTANCE.setDocumentListener((observable, oldValue, newValue) -> setFileView(oldValue, newValue));
+		selection.setDocumentListener((observable, oldValue, newValue) -> setFileView(oldValue, newValue));
 		// 폴더 선택 이벤트
-		Selection.INSTANCE.setDirectoryListener((observable, oldValue, newValue) -> setFileData());
+		selection.setDirectoryListener((observable, oldValue, newValue) -> setFileData());
 	}
 
 	@FXML
 	public void setSearch() {
 		String query = searchField.getText();
-
+		FileTree ft = FileTree.getInstance();
 		// 검색어와 검색 조건
-		FileTree.INSTANCE.setSearchText(query);
-		FileTree.INSTANCE.setSearchType(searchComboBox.getSelectionModel().getSelectedItem());
+		ft.setSearchText(query);
+		ft.setSearchType(searchComboBox.getSelectionModel().getSelectedItem());
 
-		if ("".equals(query) || FileTree.INSTANCE.getSearchType().equals(SearchType.TITLE)) {
+		if ("".equals(query) || ft.getSearchType().equals(SearchType.TITLE)) {
 			setFileData();
 		} else {
 			TaskLuceneSearch task = new TaskLuceneSearch(searchField.getText());
 			// 검색 스레드
 			ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
 			service.submit(task);
-			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-				@Override
-				public void handle(WorkerStateEvent event) {
-					listMerge = FXCollections.observableArrayList(task.getValue());
-					fileListView.setItems(listMerge);
-					fileListView.getSelectionModel().clearSelection();
-					// 스레드 이상 없을시 종료 표시만..
-					Selection.INSTANCE.setProgress(0.0);
-				}
+			task.setOnSucceeded((e) -> {
+				listMerge = FXCollections.observableArrayList(task.getValue());
+				fileListView.setItems(listMerge);
+				fileListView.getSelectionModel().clearSelection();
+				selection.setProgress(0.0);
 			});
 		}
 	}
@@ -156,20 +160,24 @@ public class FileController implements Initializable {
 
 	// 파일 컬럼 생성
 	public void setFileColumn() {
-		
+
 		fileNameColumn.setCellValueFactory(new PropertyValueFactory<FileBean, HBox>("filePathIcon"));
-//		filePathColumn.setCellValueFactory(new PropertyValueFactory<FileBean, Hyperlink>("filePath"));
-//		fileTitleColumn.setCellValueFactory(new PropertyValueFactory<FileBean, String>("fileName"));
-//		fileCommentColumn.setCellValueFactory(new PropertyValueFactory<FileBean, Long>("fileSize"));
+		// filePathColumn.setCellValueFactory(new PropertyValueFactory<FileBean,
+		// Hyperlink>("filePath"));
+		// fileTitleColumn.setCellValueFactory(new
+		// PropertyValueFactory<FileBean, String>("fileName"));
+		// fileCommentColumn.setCellValueFactory(new
+		// PropertyValueFactory<FileBean, Long>("fileSize"));
 
 	}
 
 	// 파일 데이터 생성
 	public void setFileData() {
-		FileTree.INSTANCE.createFileTree();
+		FileTree ft = FileTree.getInstance();
+		ft.createFileTree();
 		listMerge.clear();
-		listMerge.addAll(FileTree.INSTANCE.getFolders());
-		listMerge.addAll(FileTree.INSTANCE.getFiles());
+		listMerge.addAll(ft.getFolders());
+		listMerge.addAll(ft.getFiles());
 		fileListView.setItems(listMerge);
 		fileListView.getSelectionModel().clearSelection();
 
@@ -182,21 +190,20 @@ public class FileController implements Initializable {
 			if (newValue.toFile() == null)
 				return;
 
-			// 중복된 eml은 탭 건너뜀
-			// if (duplicatePrevention.contains(newValue)) {
-			// Path p = newValue;
-			// Tab tab = fileView.getTabs().stream().filter(new Predicate<Tab>()
-			// {
-			// @Override
-			// public boolean test(Tab t) {
-			// return t.getId().equals(getTabId(p.getFileName().toString()));
-			// }
-			// }).findFirst().orElse(null);
-			// fileView.getSelectionModel().select(tab);
-			// return;
-			// } else {
-			// duplicatePrevention.add(newValue);
-			// }
+			// 중복된 eml은 별도 로직 타지 않고 건너뜀
+			if (selection.getDuplicatePrevention().contains(newValue)) {
+				Path p = newValue;
+				Tab tab = tabPane.getTabs().stream().filter(new Predicate<Tab>() {
+					@Override
+					public boolean test(Tab t) {
+						return t.getId().equals(getTabId(p.getFileName().toString()));
+					}
+				}).findFirst().orElse(null);
+				tabPane.getSelectionModel().select(tab);
+				return;
+			} else {
+				selection.setDuplicatePrevention(newValue);
+			}
 
 			// 마임 파싱
 			// File f = MimeUtils.decodeLocalForSearch(newValue.toFile());
@@ -209,11 +216,13 @@ public class FileController implements Initializable {
 			tab = new Tab();
 			tab.setClosable(true);
 			tab.setText(meta.getMetaTabTitle());
-			tab.setId(getTabId(newValue.getFileName().toString()));
+			tab.setId(getTabId(newValue.getFileName().toString()));	// 각 탭 마다 고유 아이디 추가
 
 			// 컨텍스트 메뉴 탭마다 독립...
-			tab.setContextMenu(setFileViewContext(tab));
+//			tab.setContextMenu(setFileViewContext(tab));
+			tab.setContextMenu(new TabWalker(tabPane, tab));
 
+			
 			// [s] 컨텐츠 생성
 			VBox vbox = new VBox();
 			textFileData.clear();
@@ -234,9 +243,9 @@ public class FileController implements Initializable {
 			root.getChildren().addAll(vbox);
 
 			tab.setContent(root);
-			fileView.setTabClosingPolicy(TabClosingPolicy.SELECTED_TAB);
-			fileView.getSelectionModel().select(tab);
-			fileView.getTabs().add(tab);
+			tabPane.setTabClosingPolicy(TabClosingPolicy.SELECTED_TAB);
+			tabPane.getSelectionModel().select(tab);
+			tabPane.getTabs().add(tab);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -245,51 +254,57 @@ public class FileController implements Initializable {
 
 	// 탭에 컨텍스트 메뉴 이벤트 처리 temp
 	public ContextMenu setFileViewContext(Tab tab) {
-
-		// duplicatePrevention.clear();
-
 		final ContextMenu context = new ContextMenu();
 		MenuItem menu = null;
 
 		// 현재 닫기
 		menu = new MenuItem("닫기");
-		menu.setOnAction((ActionEvent e) -> fileView.getTabs().remove(tab));
+		menu.setOnAction((e) -> {
+			// 탭닫기
+			tabPane.getTabs().remove(tab);
+			// 중복 리스트 수정
+			tabPane.getSelectionModel().select(tab);
+			selection.getDuplicatePrevention().remove(tabPane.getSelectionModel().getSelectedIndex() + 1);
+		});
 		context.getItems().add(menu);
 
 		// 다른 창 닫기
 		menu = new MenuItem("다른창 닫기");
-		menu.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				fileView.getSelectionModel().select(tab);
-				int si = fileView.getSelectionModel().getSelectedIndex();
-				fileView.getTabs().remove(si + 1, fileView.getTabs().size());
-				fileView.getTabs().remove(0, si);
-			}
+		menu.setOnAction((event) -> {
+			// 탭닫기
+			tabPane.getSelectionModel().select(tab);
+			int start = tabPane.getSelectionModel().getSelectedIndex();
+			int end = tabPane.getTabs().size();
+			tabPane.getTabs().remove(start + 1, end);
+			tabPane.getTabs().remove(0, start);
+			// 중복 리스트 수정
+			selection.getDuplicatePrevention().remove(start + 1, end);
+			selection.getDuplicatePrevention().remove(0, start);
 		});
 		context.getItems().add(menu);
 
 		// 좌측 닫기
 		menu = new MenuItem("좌측 닫기");
-		menu.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				fileView.getSelectionModel().select(tab);
-				int end = fileView.getSelectionModel().getSelectedIndex();
-				fileView.getTabs().remove(0, end);
-			}
+		menu.setOnAction((event) -> {
+			// 탭닫기
+			tabPane.getSelectionModel().select(tab);
+			int end = tabPane.getSelectionModel().getSelectedIndex();
+			tabPane.getTabs().remove(0, end);
+			// 중복 리스트 수정
+			selection.getDuplicatePrevention().remove(0, end);
 		});
 		context.getItems().add(menu);
 
 		// 우측 닫기
 		menu = new MenuItem("우측 닫기");
-		menu.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				fileView.getSelectionModel().select(tab);
-				int start = fileView.getSelectionModel().getSelectedIndex();
-				fileView.getTabs().remove(start + 1, fileView.getTabs().size());
-			}
+		menu.setOnAction((event) -> {
+			tabPane.getSelectionModel().select(tab);
+			int start = tabPane.getSelectionModel().getSelectedIndex();
+			int end = tabPane.getTabs().size();
+			// 탭닫기
+			tabPane.getTabs().remove(start + 1, end);
+			// 중복 리스트 수정
+			selection.getDuplicatePrevention().remove(start + 1, end);
 		});
 		context.getItems().add(menu);
 
@@ -298,7 +313,12 @@ public class FileController implements Initializable {
 
 		// 전체 닫기
 		menu = new MenuItem("전체 닫기");
-		menu.setOnAction((ActionEvent e) -> fileView.getTabs().clear());
+		menu.setOnAction((e) -> {
+			// 탭닫기
+			tabPane.getTabs().clear();
+			// 중복 리스트 수정
+			selection.getDuplicatePrevention().clear();
+		});
 		context.getItems().add(menu);
 
 		return context;

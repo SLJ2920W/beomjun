@@ -35,7 +35,7 @@ public class MainController {
 		try {
 			fileController.init(this);
 
-			Selection section = Selection.INSTANCE;
+			Selection section = Selection.getInstance();
 
 			// 진행바
 			progressbar.progressProperty().unbind();
@@ -59,14 +59,14 @@ public class MainController {
 			Path getPath = Paths.get(selectedDirectory.getAbsolutePath());
 
 			// 현재 경로 저장
-			Selection.INSTANCE.setDirectory(getPath);
+			Selection.getInstance().setDirectory(getPath);
 
 			// 기본 인덱스 폴더 생성
 			App.isIndexFolder();
 
 			// 현재 경로를 프로퍼티에 저장
 			App.setHome();
-
+			
 			fileController.init(this);
 		}
 	}

@@ -36,7 +36,7 @@ public class TaskChangeToHtml extends Task<Queue<String>> {
 
 	@Override
 	protected Queue<String> call() throws Exception {
-		Path _sp = Selection.INSTANCE.getDirectory();
+		Path _sp = Selection.getInstance().getDirectory();
 		Queue<String> result = null;
 		try {
 			result = indexDocs(_sp);
@@ -66,7 +66,7 @@ public class TaskChangeToHtml extends Task<Queue<String>> {
 							updateMessage("확인 중.. "+file.getFileName());
 						}
 					} catch (Exception e) {
-//						log.info("실패 : {}" + file.toFile());
+						log.info("실패 : {}" + file.toFile());
 						result.add(file.toFile().toString());
 					}
 					return FileVisitResult.CONTINUE;
@@ -80,12 +80,13 @@ public class TaskChangeToHtml extends Task<Queue<String>> {
 	}
 
 	/**
-	 * 파싱 제외할 규칙 new Selection생성자에서 정의된 규칙으로 시작 하는 폴더
-	 * 파일인 경우 같은 파일 이름 확장자 htm이 아닌 경우
+	 * 파싱 제외할 규칙  
+	 * new Selection 에서 정의된 규칙으로 시작 하는 이름이 아닌 경우와
+	 * 파일인 경우 같은 파일 이름 확장자 html이 없을때 true
 	 */
 	private boolean filter(Path file) {
 		if (Files.isDirectory(file)) {
-			long c = Selection.INSTANCE.getMailViewIgnore().stream().filter((e) -> file.getFileName().startsWith(e)).count();
+			long c = Selection.getInstance().getMailViewIgnore().stream().filter((e) -> file.getFileName().startsWith(e)).count();
 			if (c == 0)
 				return true;
 		} else if (file.toString().endsWith(".eml")) {

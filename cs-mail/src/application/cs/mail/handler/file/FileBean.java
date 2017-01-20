@@ -89,9 +89,9 @@ public class FileBean implements EventHandler<ActionEvent> {
 		final Path path = (Path) link.getUserData();
 		// 현재 경로에 해당 하는 파일 및 폴더를 맵핑 함 (이벤트 처리 하기 위함)
 		if (Files.isDirectory(path))
-			Selection.INSTANCE.setDirectory(path);
+			Selection.getInstance().setDirectory(path);
 		else
-			Selection.INSTANCE.setDocument(path);
+			Selection.getInstance().setDocument(path);
 
 	}
 

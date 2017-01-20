@@ -62,7 +62,7 @@ public class Main extends Application {
 			App.init();
 			
 			// 파일 감시 스레드
-//			new WatchDir(Selection.INSTANCE.getDirectory().toString()).call();
+//			new WatchDir(Selection.getInstance().getDirectory().toString()).call();
 			
 //			DaemonThreadFactory dtf = new DaemonThreadFactory();
 //			ExecutorService service = Executors.newCachedThreadPool(dtf);

@@ -47,7 +47,7 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0">
                <children>
-                  <TabPane fx:id="fileView" prefWidth="999.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TabPane fx:id="tabPane" prefWidth="999.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
         </items>
