@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import application.cs.mail.common.App;
 import application.cs.mail.common.Selection;
@@ -19,7 +18,7 @@ import javafx.stage.DirectoryChooser;
 
 public class MainController {
 
-	public static final Logger log = LoggerFactory.getLogger(MainController.class);
+	private static final Logger log = LoggerFactory.getLogger(MainController.class);
 
 	@FXML
 	FileController fileController;
@@ -66,7 +65,7 @@ public class MainController {
 
 			// 현재 경로를 프로퍼티에 저장
 			App.setHome();
-			
+
 			fileController.init(this);
 		}
 	}

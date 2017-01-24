@@ -36,9 +36,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#setMenuBarHandler" text="Open">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="ENTER" control="UP" meta="UP" shift="ANY" shortcut="UP" />
-                     </accelerator></MenuItem>
+				</MenuItem>
             </items>
           </Menu>
         </menus>

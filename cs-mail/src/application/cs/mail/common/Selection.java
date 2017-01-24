@@ -7,12 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -26,15 +28,15 @@ import javafx.collections.ObservableList;
  */
 public class Selection {
 	// 폴더 리스트 표시중에 제외할 패턴
-	private List<String> mailViewIgnore = new ArrayList<>();
+	private CopyOnWriteArrayList<String> mailViewIgnore = new CopyOnWriteArrayList<>();
 	// 메일 이미지 저장 루트 폴더
 	private ReadOnlyStringWrapper mailViewTempFolderName = new ReadOnlyStringWrapper("tmp");
 	// 각종 설정 toString으로 확인
-	private final ReadOnlyMapWrapper<String, String> setting = new ReadOnlyMapWrapper<>(FXCollections.observableMap(new HashMap<String, String>()));
+	private ReadOnlyMapWrapper<String, String> setting = new ReadOnlyMapWrapper<>(FXCollections.observableMap(new HashMap<String, String>()));
 	// 선택한 디렉토리
-	private final ReadOnlyObjectWrapper<Path> directory = new ReadOnlyObjectWrapper<>(this, "directory");
+	private ObjectProperty<Path> directory = new SimpleObjectProperty<>(this, "directory");
 	// 선택한 문서
-	private final ReadOnlyObjectWrapper<Path> document = new ReadOnlyObjectWrapper<>(this, "document");
+	private ObjectProperty<Path> document = new SimpleObjectProperty<>(this, "document");
 	// 진행 상태
 	private DoubleProperty progress = new SimpleDoubleProperty(0.0);
 	private StringProperty message = new SimpleStringProperty("");
@@ -43,14 +45,7 @@ public class Selection {
 	private List<ChangeListener<Path>> documentListener = new ArrayList<ChangeListener<Path>>();
 
 	private ObservableList<Path> duplicatePrevention = FXCollections.observableArrayList();
-
-	public ObservableList<Path> getDuplicatePrevention() {
-		return duplicatePrevention;
-	}
-
-	public void setDuplicatePrevention(Path duplicatePrevention) {
-		this.duplicatePrevention.add(duplicatePrevention);
-	}
+	private StringProperty defaultBrowser = new SimpleStringProperty("iexplore");
 
 	private volatile static Selection instance;
 
@@ -95,11 +90,11 @@ public class Selection {
 		this.setting.put(key, value);
 	}
 
-	public List<String> getMailViewIgnore() {
+	public CopyOnWriteArrayList<String> getMailViewIgnore() {
 		return mailViewIgnore;
 	}
 
-	public void setMailViewIgnore(List<String> mailViewIgnore) {
+	public void setMailViewIgnore(CopyOnWriteArrayList<String> mailViewIgnore) {
 		this.mailViewIgnore = mailViewIgnore;
 	}
 
@@ -111,28 +106,28 @@ public class Selection {
 		return this.mailViewTempFolderNameProperty().get();
 	}
 
-	public void setDirectory(Path dir) {
-		this.directory.set(dir);
-	}
-
-	public void setDocument(Path dir) {
-		this.document.set(dir);
-	}
-
-	public final javafx.beans.property.ReadOnlyObjectProperty<java.nio.file.Path> directoryProperty() {
-		return this.directory.getReadOnlyProperty();
+	public final ObjectProperty<Path> directoryProperty() {
+		return this.directory;
 	}
 
 	public final java.nio.file.Path getDirectory() {
 		return this.directoryProperty().get();
 	}
 
-	public final javafx.beans.property.ReadOnlyObjectProperty<java.nio.file.Path> documentProperty() {
-		return this.document.getReadOnlyProperty();
+	public final void setDirectory(final java.nio.file.Path directory) {
+		this.directoryProperty().set(directory);
+	}
+
+	public final ObjectProperty<Path> documentProperty() {
+		return this.document;
 	}
 
 	public final java.nio.file.Path getDocument() {
 		return this.documentProperty().get();
+	}
+
+	public final void setDocument(final java.nio.file.Path document) {
+		this.documentProperty().set(document);
 	}
 
 	public List<ChangeListener<Path>> getDirectoryListener() {
@@ -175,6 +170,26 @@ public class Selection {
 
 	public final void setMessage(final java.lang.String message) {
 		this.messageProperty().set(message);
+	}
+
+	public final StringProperty defaultBrowserProperty() {
+		return this.defaultBrowser;
+	}
+
+	public final java.lang.String getDefaultBrowser() {
+		return this.defaultBrowserProperty().get();
+	}
+
+	public final void setDefaultBrowser(final java.lang.String defaultBrowser) {
+		this.defaultBrowserProperty().set(defaultBrowser);
+	}
+
+	public ObservableList<Path> getDuplicatePrevention() {
+		return duplicatePrevention;
+	}
+
+	public void setDuplicatePrevention(Path duplicatePrevention) {
+		this.duplicatePrevention.add(duplicatePrevention);
 	}
 
 }

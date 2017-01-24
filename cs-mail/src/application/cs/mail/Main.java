@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import application.cs.mail.common.App;
+import application.cs.mail.common.Selection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -29,6 +30,10 @@ public class Main extends Application {
 		primaryStage.getIcons().add(App.applicationIcon()); // 아이콘
 		primaryStage.setTitle("메일 뷰어"); // 타이틀
 		App.setPrimaryStage(primaryStage); // 기본..
+		
+		
+//		App.getDefaultBrowser();
+		
 		// [e]
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource("/resources/cs/mail/fxml/Main.fxml"));
@@ -60,6 +65,7 @@ public class Main extends Application {
 
 		try {
 			App.init();
+			Selection.getInstance().setDefaultBrowser(App.getDefaultBrowser());
 			
 			// 파일 감시 스레드
 //			new WatchDir(Selection.getInstance().getDirectory().toString()).call();

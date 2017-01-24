@@ -48,6 +48,9 @@ public class FileTree {
 		return instance;
 	}
 
+	/**
+	 * 파일 구조를 생성 한다
+	 */
 	public void createFileTree() {
 
 		// 보여줄 경로가 널이면 기본 홈 아니면 선택값
@@ -68,8 +71,7 @@ public class FileTree {
 		// null로 하면 exception이 나오네
 		Set<FileVisitOption> options = Collections.emptySet();
 
-		// 검색어 존재 함 필터 처리
-		if (isSearch()) {
+		if (isSearch()) { // 검색어 존재 함
 			depth = 99;
 			pattern = FileSystems.getDefault().getPathMatcher("glob:" + "*" + searchText + "*");
 			searchType = getSearchType();
@@ -97,7 +99,7 @@ public class FileTree {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					try {
-						// 기본 필터 확인 후 아래 조건으로 
+						// 기본 필터 확인 후 아래 조건으로
 						if (defaultFilter(file, attrs))
 							return FileVisitResult.CONTINUE;
 
@@ -134,7 +136,7 @@ public class FileTree {
 		if (Files.isDirectory(file)) {
 			// 리스트에 제외할 규칙
 			long c = Selection.getInstance().getMailViewIgnore().stream().filter((e) -> file.getFileName().startsWith(e)).count();
-			if (c == 0)	// 제외 대상에 포함 하지 않으면 false
+			if (c == 0) // 제외 대상에 포함 하지 않으면 false
 				return false;
 		}
 		return true;

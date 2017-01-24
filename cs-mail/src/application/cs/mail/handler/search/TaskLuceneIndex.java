@@ -35,17 +35,18 @@ import javafx.concurrent.Task;
 
 /**
  * <ul>
- * 	<li> 검색을 위한 인덱스 생성 </li>
- * 	<li> http://lucene.apache.org/core/6_3_0/index.html </li>
- * 	<li> http://palpit.tistory.com/773 </li>
+ * <li>검색을 위한 인덱스 생성</li>
+ * <li>http://lucene.apache.org/core/6_3_0/index.html</li>
+ * <li>http://palpit.tistory.com/773</li>
  * </ul>
+ * 
  * <pre>
  * <code>
  * </code>
  * </pre>
  */
 public class TaskLuceneIndex extends Task<Boolean> {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(TaskLuceneIndex.class);
 
 	private Mode mode; // update create
@@ -58,15 +59,15 @@ public class TaskLuceneIndex extends Task<Boolean> {
 		this.docsPath = Selection.getInstance().getDirectory().toString();
 		// 현재 선택한 폴더 경로 + index폴더
 		this.indexPath = Selection.getInstance().getDirectory() + File.separator + App.INDEX_FOLDER;
-		
+
 	}
 
 	@Override
 	protected Boolean call() throws Exception {
-		
+
 		final Path docDir = Paths.get(docsPath);
 		if (!Files.isReadable(docDir)) {
-			updateMessage("Document directory '" + docDir.toAbsolutePath() + "' does not exist or is not readable, please check the path");
+			updateMessage("디렉토리를 다시 '" + docDir.toAbsolutePath() + "' 확인 해주시기 바랍니다.");
 			System.exit(1);
 		}
 
@@ -86,7 +87,7 @@ public class TaskLuceneIndex extends Task<Boolean> {
 
 			IndexWriter writer = new IndexWriter(dir, iwc);
 			flag = indexDocs(writer, docDir);
-			
+
 			// temp
 			writer.forceMerge(1);
 
@@ -95,12 +96,12 @@ public class TaskLuceneIndex extends Task<Boolean> {
 			updateMessage("색인 작업 완료");
 
 		} catch (IOException e) {
-			updateMessage(" caught a " + e.getClass() + "\n with message: " + e.getMessage());
+			log.error(e.toString());
 		}
 
 		return flag;
 	}
-	
+
 	/**
 	 * 
 	 * @param writer
@@ -150,21 +151,19 @@ public class TaskLuceneIndex extends Task<Boolean> {
 			doc.add(new LongPoint("modified", lastModified));
 
 			doc.add(new TextField("contents", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))));
-			
+
 			Field d = new StringField("filename", file.getFileName().toString(), Field.Store.YES);
 			doc.add(d);
 
 			// [s] progress
-//			int _count = this.count;
-//			updateProgress(_count, _count + queue.take().getCount());
+			// int _count = this.count;
+			// updateProgress(_count, _count + queue.take().getCount());
 			// [e] progress
 
 			if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
-				log.info("추가 " + file);
 				updateMessage("adding " + file.getFileName());
 				writer.addDocument(doc);
 			} else {
-				log.info("변경 " + file);
 				updateMessage("updating " + file.getFileName());
 				writer.updateDocument(new Term("path", file.toString()), doc);
 			}

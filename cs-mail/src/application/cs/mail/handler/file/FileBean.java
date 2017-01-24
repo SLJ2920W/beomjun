@@ -76,6 +76,7 @@ public class FileBean implements EventHandler<ActionEvent> {
 			size = 0L;
 			time = FileTime.fromMillis(0L);
 		}
+		fileName.set("");
 		fileSize.set(size);
 		fileTime.set(time);
 		// [e] 기타
@@ -93,46 +94,6 @@ public class FileBean implements EventHandler<ActionEvent> {
 		else
 			Selection.getInstance().setDocument(path);
 
-	}
-
-	public Hyperlink getFilePath() {
-		return filePath.get();
-	}
-
-	public String getFileName() {
-		return fileName.get();
-	}
-
-	public Long getFileSize() {
-		return fileSize.get();
-	}
-
-	public FileTime getFileTime() {
-		return fileTime.get();
-	}
-
-	public void setFilePath(ReadOnlyObjectWrapper<Hyperlink> filePath) {
-		this.filePath = filePath;
-	}
-
-	public void setFileName(ReadOnlyStringWrapper fileName) {
-		this.fileName = fileName;
-	}
-
-	public void setFileSize(ReadOnlyLongWrapper fileSize) {
-		this.fileSize = fileSize;
-	}
-
-	public void setFileTime(ReadOnlyObjectWrapper<FileTime> fileTime) {
-		this.fileTime = fileTime;
-	}
-
-	public HBox getFilePathIcon() {
-		return filePathIcon.get();
-	}
-
-	public void setFilePathIcon(ReadOnlyObjectWrapper<HBox> filePathIcon) {
-		this.filePathIcon = filePathIcon;
 	}
 
 }

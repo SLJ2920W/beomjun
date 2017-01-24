@@ -74,8 +74,7 @@ public class TaskLuceneSearch extends Task<Queue<FileBean>> {
 			QueryParser parser = new QueryParser(LUCENE_CONTENTS, analyzer);
 
 			if (searchQuery == null || "".equals(searchQuery)) {
-//				log.error("??");
-				reader.close();
+				log.error("잘못된 검색어 및 검색 조건\nsearchQuery = '" + searchQuery + "' indexPath = '" + indexPath + "'");
 			}
 
 			searchQuery = searchQuery.trim();
@@ -85,10 +84,8 @@ public class TaskLuceneSearch extends Task<Queue<FileBean>> {
 			result = doSearch(in, searcher, query);
 			updateMessage("검색 완료: " + query.toString(LUCENE_CONTENTS));
 
-//			reader.close();
-
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.toString());
 		}
 		return result;
 	}
@@ -114,7 +111,6 @@ public class TaskLuceneSearch extends Task<Queue<FileBean>> {
 					sb.append(field.name() + ": " + field.stringValue());
 				}
 			}
-//			log.info(sb.toString());
 			Path path = Paths.get(title.replaceAll(".htm", ".eml"));
 			result.add(new FileBean(null, path, Files.readAttributes(path, BasicFileAttributes.class)));
 		}

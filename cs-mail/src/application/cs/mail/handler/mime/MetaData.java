@@ -26,7 +26,7 @@ public class MetaData {
 	private final ReadOnlyStringWrapper metaTo = new ReadOnlyStringWrapper(this, "metaTo");
 	private final ReadOnlyStringWrapper metaCC = new ReadOnlyStringWrapper(this, "metaCC");
 	private final ReadOnlyStringWrapper metaBCC = new ReadOnlyStringWrapper(this, "metaBCC");
-	public static final MetaData INSTANCE = new MetaData();
+	
 
 	public MetaData() {
 
@@ -47,24 +47,24 @@ public class MetaData {
 				String sentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(msg.getSentDate());
 
 				// 탭에 표시 하는 탭 제목용
-				setMetaTabTitle(formatAddresses(msg.getFrom(), true));
+				metaTabTitle.set(formatAddresses(msg.getFrom(), true));				
 				// 전송 날짜
-				setMetaSentDate(sentDate);
+				metaSentDate.set(sentDate);
 				// 보낸 사람
-				setMetaFrom(formatAddresses(msg.getFrom()));
+				metaFrom.set(formatAddresses(msg.getFrom()));
 				// 제목
-				setMetaSubject(msg.getSubject());
+				metaSubject.set(msg.getSubject());
 				// 회신 받는 메일 주소
-				setMetaReplyTo(formatAddresses(msg.getReplyTo()));
+				metaReplyTo.set(formatAddresses(msg.getReplyTo()));
 				// 받는 사람
 				if(msg.getRecipients(Message.RecipientType.TO) != null)
-					setMetaTo(formatAddresses(msg.getRecipients(Message.RecipientType.TO)));
+					metaTo.set(formatAddresses(msg.getRecipients(Message.RecipientType.TO)));
 				// 참조
 				if (msg.getRecipients(Message.RecipientType.CC) != null)
-					setMetaCC(formatAddresses(msg.getRecipients(Message.RecipientType.CC)));
+					metaCC.set(formatAddresses(msg.getRecipients(Message.RecipientType.CC)));
 				// 숨은 참조
 				if (msg.getRecipients(Message.RecipientType.BCC) != null) {
-					setMetaBCC(formatAddresses(msg.getRecipients(Message.RecipientType.BCC)));
+					metaBCC.set(formatAddresses(msg.getRecipients(Message.RecipientType.BCC)));
 				}
 			} catch (MessagingException e) {
 				e.printStackTrace();
@@ -109,100 +109,86 @@ public class MetaData {
 		return out.toString();
 	}
 
-	public final javafx.beans.property.ReadOnlyStringProperty metaSubjectProperty() {
-		return this.metaSubject.getReadOnlyProperty();
-	}
-
-	public final java.lang.String getMetaSubject() {
-		return this.metaSubjectProperty().get();
-	}
-
-	public final javafx.beans.property.ReadOnlyStringProperty metaReplyToProperty() {
-		return this.metaReplyTo.getReadOnlyProperty();
-	}
-
-	public final java.lang.String getMetaReplyTo() {
-		return this.metaReplyToProperty().get();
-	}
-
-	public final javafx.beans.property.ReadOnlyStringProperty metaSentDateProperty() {
-		return this.metaSentDate.getReadOnlyProperty();
-	}
-
-	public final java.lang.String getMetaSentDate() {
-		return this.metaSentDateProperty().get();
-	}
-
-	public final javafx.beans.property.ReadOnlyStringProperty metaFromProperty() {
-		return this.metaFrom.getReadOnlyProperty();
-	}
-
-	public final javafx.beans.property.ReadOnlyStringProperty metaToProperty() {
-		return this.metaTo.getReadOnlyProperty();
-	}
-
-	public final java.lang.String getMetaTo() {
-		return this.metaToProperty().get();
-	}
-
-	public final javafx.beans.property.ReadOnlyStringProperty metaCCProperty() {
-		return this.metaCC.getReadOnlyProperty();
-	}
-
-	public final java.lang.String getMetaCC() {
-		return this.metaCCProperty().get();
-	}
-
-	public final javafx.beans.property.ReadOnlyStringProperty metaBCCProperty() {
-		return this.metaBCC.getReadOnlyProperty();
-	}
-
-	public final java.lang.String getMetaBCC() {
-		return this.metaBCCProperty().get();
-	}
-
-	public final java.lang.String getMetaFrom() {
-		return this.metaFromProperty().get();
-	}
-
 	public final javafx.beans.property.ReadOnlyStringProperty metaTabTitleProperty() {
 		return this.metaTabTitle.getReadOnlyProperty();
 	}
+	
 
 	public final java.lang.String getMetaTabTitle() {
 		return this.metaTabTitleProperty().get();
 	}
+	
 
-	public void setMetaSubject(String metaSubject) {
-		this.metaSubject.set(metaSubject);
+	public final javafx.beans.property.ReadOnlyStringProperty metaSubjectProperty() {
+		return this.metaSubject.getReadOnlyProperty();
 	}
+	
 
-	public void setMetaReplyTo(String metaReplyTo) {
-		this.metaReplyTo.set(metaReplyTo);
+	public final java.lang.String getMetaSubject() {
+		return this.metaSubjectProperty().get();
 	}
+	
 
-	public void setMetaSentDate(String metaSentDate) {
-		this.metaSentDate.set(metaSentDate);
+	public final javafx.beans.property.ReadOnlyStringProperty metaReplyToProperty() {
+		return this.metaReplyTo.getReadOnlyProperty();
 	}
+	
 
-	public void setMetaFrom(String metaFrom) {
-		this.metaFrom.set(metaFrom);
+	public final java.lang.String getMetaReplyTo() {
+		return this.metaReplyToProperty().get();
 	}
+	
 
-	public void setMetaTo(String metaTo) {
-		this.metaTo.set(metaTo);
+	public final javafx.beans.property.ReadOnlyStringProperty metaSentDateProperty() {
+		return this.metaSentDate.getReadOnlyProperty();
 	}
+	
 
-	public void setMetaCC(String metaCC) {
-		this.metaCC.set(metaCC);
+	public final java.lang.String getMetaSentDate() {
+		return this.metaSentDateProperty().get();
 	}
+	
 
-	public void setMetaBCC(String metaBCC) {
-		this.metaBCC.set(metaBCC);
+	public final javafx.beans.property.ReadOnlyStringProperty metaFromProperty() {
+		return this.metaFrom.getReadOnlyProperty();
 	}
+	
 
-	public void setMetaTabTitle(String metaTabTitle) {
-		this.metaTabTitle.set(metaTabTitle);
+	public final java.lang.String getMetaFrom() {
+		return this.metaFromProperty().get();
 	}
+	
+
+	public final javafx.beans.property.ReadOnlyStringProperty metaToProperty() {
+		return this.metaTo.getReadOnlyProperty();
+	}
+	
+
+	public final java.lang.String getMetaTo() {
+		return this.metaToProperty().get();
+	}
+	
+
+	public final javafx.beans.property.ReadOnlyStringProperty metaCCProperty() {
+		return this.metaCC.getReadOnlyProperty();
+	}
+	
+
+	public final java.lang.String getMetaCC() {
+		return this.metaCCProperty().get();
+	}
+	
+
+	public final javafx.beans.property.ReadOnlyStringProperty metaBCCProperty() {
+		return this.metaBCC.getReadOnlyProperty();
+	}
+	
+
+	public final java.lang.String getMetaBCC() {
+		return this.metaBCCProperty().get();
+	}
+	
+
+
 
 }

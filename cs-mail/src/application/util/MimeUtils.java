@@ -55,7 +55,7 @@ public class MimeUtils {
 	 * @return 디코딩된 htm 파일 경로
 	 * @throws Exception
 	 */
-	public static File decodeLocalForSearch(File encFile) throws Exception {
+	public synchronized static File decodeLocalForSearch(File encFile) throws Exception {
 		MhtmlDecoder decoder = new MhtmlDecoder();
 		decoder.setOptions(new DecodeOption4Local("UTF-8"));
 		return decoder.save(encFile);

@@ -2,22 +2,19 @@ package application.cs.mail.controller.file;
 
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import application.cs.mail.common.Selection;
 import application.cs.mail.controller.MainController;
 import application.cs.mail.handler.DaemonThreadFactory;
-import application.cs.mail.handler.file.Browser;
 import application.cs.mail.handler.file.FileBean;
 import application.cs.mail.handler.file.FileTree;
 import application.cs.mail.handler.menu.TabWalker;
-import application.cs.mail.handler.mime.MetaData;
 import application.cs.mail.handler.search.SearchType;
 import application.cs.mail.handler.search.TaskChangeToHtml;
 import application.cs.mail.handler.search.TaskLuceneIndex;
@@ -27,15 +24,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TableColumn;
@@ -43,12 +34,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 
 public class FileController implements Initializable {
 
 	Selection selection = Selection.getInstance();
+
+	private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
 	@FXML
 	private TableView<FileBean> fileListView;
@@ -60,34 +51,19 @@ public class FileController implements Initializable {
 	private TableColumn<FileBean, String> fileTitleColumn;
 	@FXML
 	private TableColumn<FileBean, Long> fileCommentColumn;
-
 	@FXML
 	private ComboBox<SearchType> searchComboBox;
-
 	@FXML
 	private ProgressBar progressbar;
-
 	@FXML
 	private TextField searchField;
-
 	@FXML
 	private TabPane tabPane;
-	private Tab tab;
 
-	private ObservableList<Node> textFileData = FXCollections.observableArrayList();
-//	public ObservableList<Path> duplicatePrevention = FXCollections.observableArrayList();
 	private ObservableList<FileBean> listMerge = FXCollections.observableArrayList();
 
 	public void init(MainController mainController) {
 		defaultThread(); // 파일 변경 내역 확인
-
-		// duplicatePrevention.addListener(new ListChangeListener<Path>() {
-		// @Override
-		// public void onChanged(javafx.collections.ListChangeListener.Change<?
-		// extends Path> c) {
-		// System.out.println(1);
-		// }
-		// });
 	}
 
 	@Override
@@ -133,6 +109,7 @@ public class FileController implements Initializable {
 		ft.setSearchText(query);
 		ft.setSearchType(searchComboBox.getSelectionModel().getSelectedItem());
 
+		// 파일 검색은 IO, 내용 검색은 루씬
 		if ("".equals(query) || ft.getSearchType().equals(SearchType.TITLE)) {
 			setFileData();
 		} else {
@@ -152,23 +129,15 @@ public class FileController implements Initializable {
 	// 인덱스 관련
 	@FXML
 	public void updateIndex() {
-		// HTML만 인덱스 잡음 temp
-		TaskLuceneIndex task = new TaskLuceneIndex(Mode.CREATE);
+		// HTML만 인덱스 잡음
+		TaskLuceneIndex task = new TaskLuceneIndex(Mode.UPDATE);
 		ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
 		service.submit(task);
 	}
 
 	// 파일 컬럼 생성
 	public void setFileColumn() {
-
 		fileNameColumn.setCellValueFactory(new PropertyValueFactory<FileBean, HBox>("filePathIcon"));
-		// filePathColumn.setCellValueFactory(new PropertyValueFactory<FileBean,
-		// Hyperlink>("filePath"));
-		// fileTitleColumn.setCellValueFactory(new
-		// PropertyValueFactory<FileBean, String>("fileName"));
-		// fileCommentColumn.setCellValueFactory(new
-		// PropertyValueFactory<FileBean, Long>("fileSize"));
-
 	}
 
 	// 파일 데이터 생성
@@ -183,169 +152,20 @@ public class FileController implements Initializable {
 
 	}
 
-	// 파일 내용 보여주기 temp
+	// 파일 내용 보여주기
 	public void setFileView(Path oldValue, Path newValue) {
 		try {
-			// 파일 없으면 처리
-			if (newValue.toFile() == null)
+			TabWalker tab = new TabWalker(newValue, tabPane);
+			if (tab.filter())
 				return;
-
-			// 중복된 eml은 별도 로직 타지 않고 건너뜀
-			if (selection.getDuplicatePrevention().contains(newValue)) {
-				Path p = newValue;
-				Tab tab = tabPane.getTabs().stream().filter(new Predicate<Tab>() {
-					@Override
-					public boolean test(Tab t) {
-						return t.getId().equals(getTabId(p.getFileName().toString()));
-					}
-				}).findFirst().orElse(null);
-				tabPane.getSelectionModel().select(tab);
-				return;
-			} else {
-				selection.setDuplicatePrevention(newValue);
-			}
-
-			// 마임 파싱
-			// File f = MimeUtils.decodeLocalForSearch(newValue.toFile());
-
-			// 탭 타이틀 표시 하기 위해 마임 파싱
-			MetaData meta = new MetaData(newValue);
-			newValue = Paths.get(newValue.toFile().toString().replaceAll(".eml", ".htm"));
-
-			String url = newValue.toString();// f.getCanonicalPath();
-			tab = new Tab();
-			tab.setClosable(true);
-			tab.setText(meta.getMetaTabTitle());
-			tab.setId(getTabId(newValue.getFileName().toString()));	// 각 탭 마다 고유 아이디 추가
-
-			// 컨텍스트 메뉴 탭마다 독립...
-//			tab.setContextMenu(setFileViewContext(tab));
-			tab.setContextMenu(new TabWalker(tabPane, tab));
-
-			
-			// [s] 컨텐츠 생성
-			VBox vbox = new VBox();
-			textFileData.clear();
-			createLabel("제목 : ", meta.getMetaSubject(), textFileData);
-			createLabel("전송일 : ", meta.getMetaSentDate(), textFileData);
-			createLabel("보낸 사람 : ", meta.getMetaFrom(), textFileData);
-			createLabel("받는 사람 : ", meta.getMetaTo(), textFileData);
-			createLabel("회신 받는 주소 :", meta.getMetaReplyTo(), textFileData);
-			createLabel("참조 : ", meta.getMetaCC(), textFileData);
-			createLabel("숨은 참조 : ", meta.getMetaBCC(), textFileData);
-			textFileData.add(new Browser(url));
-			vbox.getChildren().addAll(textFileData);
-			// [e] 컨텐츠 생성
-
-			// 탭 셋
-			HBox root = new HBox();
-			HBox.setHgrow(vbox, Priority.ALWAYS);
-			root.getChildren().addAll(vbox);
-
-			tab.setContent(root);
+			tab.createNode();
 			tabPane.setTabClosingPolicy(TabClosingPolicy.SELECTED_TAB);
 			tabPane.getSelectionModel().select(tab);
 			tabPane.getTabs().add(tab);
 
 		} catch (Exception e) {
+			log.error("파일뷰 에러 = " + getClass() + "\n" + e.toString());
 			e.printStackTrace();
 		}
 	}
-
-	// 탭에 컨텍스트 메뉴 이벤트 처리 temp
-	public ContextMenu setFileViewContext(Tab tab) {
-		final ContextMenu context = new ContextMenu();
-		MenuItem menu = null;
-
-		// 현재 닫기
-		menu = new MenuItem("닫기");
-		menu.setOnAction((e) -> {
-			// 탭닫기
-			tabPane.getTabs().remove(tab);
-			// 중복 리스트 수정
-			tabPane.getSelectionModel().select(tab);
-			selection.getDuplicatePrevention().remove(tabPane.getSelectionModel().getSelectedIndex() + 1);
-		});
-		context.getItems().add(menu);
-
-		// 다른 창 닫기
-		menu = new MenuItem("다른창 닫기");
-		menu.setOnAction((event) -> {
-			// 탭닫기
-			tabPane.getSelectionModel().select(tab);
-			int start = tabPane.getSelectionModel().getSelectedIndex();
-			int end = tabPane.getTabs().size();
-			tabPane.getTabs().remove(start + 1, end);
-			tabPane.getTabs().remove(0, start);
-			// 중복 리스트 수정
-			selection.getDuplicatePrevention().remove(start + 1, end);
-			selection.getDuplicatePrevention().remove(0, start);
-		});
-		context.getItems().add(menu);
-
-		// 좌측 닫기
-		menu = new MenuItem("좌측 닫기");
-		menu.setOnAction((event) -> {
-			// 탭닫기
-			tabPane.getSelectionModel().select(tab);
-			int end = tabPane.getSelectionModel().getSelectedIndex();
-			tabPane.getTabs().remove(0, end);
-			// 중복 리스트 수정
-			selection.getDuplicatePrevention().remove(0, end);
-		});
-		context.getItems().add(menu);
-
-		// 우측 닫기
-		menu = new MenuItem("우측 닫기");
-		menu.setOnAction((event) -> {
-			tabPane.getSelectionModel().select(tab);
-			int start = tabPane.getSelectionModel().getSelectedIndex();
-			int end = tabPane.getTabs().size();
-			// 탭닫기
-			tabPane.getTabs().remove(start + 1, end);
-			// 중복 리스트 수정
-			selection.getDuplicatePrevention().remove(start + 1, end);
-		});
-		context.getItems().add(menu);
-
-		menu = new SeparatorMenuItem();
-		context.getItems().add(menu);
-
-		// 전체 닫기
-		menu = new MenuItem("전체 닫기");
-		menu.setOnAction((e) -> {
-			// 탭닫기
-			tabPane.getTabs().clear();
-			// 중복 리스트 수정
-			selection.getDuplicatePrevention().clear();
-		});
-		context.getItems().add(menu);
-
-		return context;
-	}
-
-	// 발신자 수신자등 정보를 텍스트 필드로 만듬
-	private void createLabel(String labelName, String value, ObservableList<Node> list) {
-		if (value != null) {
-			HBox row = new HBox(20);
-			Label label = new Label(labelName);
-			label.setMinWidth(120);
-			TextField tf = new TextField(value);
-			tf.setEditable(false);
-			HBox.setHgrow(tf, Priority.ALWAYS);
-			row.getChildren().addAll(label, tf);
-			list.add(row);
-		}
-	}
-
-	// 탭 마다 고유 아이디를 생성 2016-07-25 030819_시스템운영자(System Administrator)_업무.... ->
-	// 2016-07-25_030819
-	private String getTabId(String fileName) {
-		Matcher m = Pattern.compile("\\d{4}[-]?\\d{2}[-]?\\d{2}\\s\\d{6}").matcher(fileName);
-		if (m.find()) {
-			return m.group().replaceAll("\\s", "_");
-		}
-		return fileName.replaceAll("\\s", "_");
-	}
-
 }

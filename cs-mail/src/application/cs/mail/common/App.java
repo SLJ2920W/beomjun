@@ -58,6 +58,7 @@ public class App {
 
 	/**
 	 * 내문서/메일뷰어/setting.properties 파일 없다면 생성 있다면 설정값 맵핑함
+	 * 
 	 * @throws Exception
 	 */
 	public static void init() throws Exception {
@@ -95,6 +96,7 @@ public class App {
 
 	/**
 	 * 기본 경로 설정 -> 내문서 폴더
+	 * 
 	 * @return Path
 	 */
 	public static Path getDefaultPath() {
@@ -110,51 +112,48 @@ public class App {
 
 	/**
 	 * 앱 아이콘 생성
+	 * 
 	 * @return Image
 	 */
 	public static Image applicationIcon() {
 		applicationIcon = new Image(App.class.getResourceAsStream("/resources/cs/mail/img/app.png"));
 		return applicationIcon;
 	}
-	
-	
+
 	/**
-	 * 기본 브라우저 알아내기
-	 * Runtime.getRuntime().exec(new String[] { "cmd", "/c", "start chrome http://www.naver.com" });
-	 * http://stackoverflow.com/questions/15852885/method-returning-default-browser-as-a-string
-	 * @return browser chrome, opera, iexplore .. 
+	 * 기본 브라우저 알아내기<br/>
+	 * 실행하기 -> Runtime.getRuntime().exec(new String[] { "cmd", "/c",
+	 * "start chrome http://www.naver.com" }); <br>
+	 * http://superuser.com/questions/445612/how-to-find-default-browser-in-
+	 * registry-windows-7
+	 * 
+	 * @return browser chrome, opera, iexplore ..
 	 */
-	public static String getDefaultBrowser() {
-		try {
-			// Get registry where we find the default browser
-			Process process = Runtime.getRuntime().exec("REG QUERY HKEY_CLASSES_ROOT\\http\\shell\\open\\command");
-			Scanner kb = new Scanner(process.getInputStream());
+	public static String getDefaultBrowser() throws IOException {
+		Process process = Runtime.getRuntime().exec("REG QUERY HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\http\\UserChoice");
+		try (Scanner kb = new Scanner(process.getInputStream())) {
 			while (kb.hasNextLine()) {
-				// Get output from the terminal, and replace all '\' with '/'
-				// (makes regex a bit more manageable)
-				String registry = (kb.nextLine()).replaceAll("\\\\", "/").trim();
+				String _getBrowser = kb.nextLine();
 
-				// Extract the default browser
-				Matcher matcher = Pattern.compile("/(?=[^/]*$)(.+?)[.]").matcher(registry);
-				if (matcher.find()) {
-					// Scanner is no longer needed if match is found, so close
-					// it
-					kb.close();
-					String defaultBrowser = matcher.group(1);
-
-					// Capitalize first letter and return String
-					defaultBrowser = defaultBrowser.substring(0, 1).toUpperCase() + defaultBrowser.substring(1, defaultBrowser.length());
-					return defaultBrowser;
+				Matcher m = Pattern.compile("Progid").matcher(_getBrowser);
+				if (m.find()) {
+					_getBrowser = _getBrowser.trim().split("\\s+")[2];
+					switch (_getBrowser) {
+					case "IE.HTTP":
+						return "iexplore";
+					case "ChromeHTML":
+						return "chrome";
+					case "FirefoxURL":
+						return "firefox";
+					default:
+						return "iexplore";
+					}
 				}
 			}
-			// Match wasn't found, still need to close Scanner
-			kb.close();
 		} catch (Exception e) {
-			return "iexplore";
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
-		// Have to return something if everything fails
-		return "Error: Unable to get default browser";
+		return "iexplore";
 	}
 
 	public static Stage getPrimaryStage() {

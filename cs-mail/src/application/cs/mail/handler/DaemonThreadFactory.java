@@ -2,14 +2,8 @@ package application.cs.mail.handler;
 
 import java.util.concurrent.ThreadFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import application.cs.mail.Main;
 import application.cs.mail.common.Selection;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 
 /**
  * http://stackoverflow.com/questions/10030808/making-callable-threads-as-daemon
@@ -17,7 +11,7 @@ import javafx.event.EventHandler;
  */
 public class DaemonThreadFactory implements ThreadFactory {
 	
-	private static final Logger log = LoggerFactory.getLogger(DaemonThreadFactory.class);
+//	private static final Logger log = LoggerFactory.getLogger(DaemonThreadFactory.class);
 	
 	public DaemonThreadFactory(){
 		
