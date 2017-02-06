@@ -3,6 +3,7 @@ package application.cs.mail.controller;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,10 @@ import org.slf4j.LoggerFactory;
 import application.cs.mail.common.App;
 import application.cs.mail.common.Selection;
 import application.cs.mail.controller.file.FileController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
@@ -67,6 +71,18 @@ public class MainController {
 			App.setHome();
 
 			fileController.init(this);
+		}
+	}
+	
+	// 스레드 정지 할라고 만들래
+	public void threadStop(){
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("Confirmation");
+		alert.setHeaderText("Indexing in progress");
+		alert.setContentText("Opening a new folder will cancel indexing. Continue?");
+		Optional<ButtonType> result = alert.showAndWait();
+		if (!result.isPresent() || result.get() != ButtonType.OK) {
+			Platform.exit();
 		}
 	}
 

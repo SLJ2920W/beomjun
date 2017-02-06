@@ -17,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import application.cs.mail.common.Selection;
 import application.cs.mail.handler.file.Browser;
 import application.cs.mail.handler.mime.MetaData;
-import javafx.collections.ObservableSet;
-import javafx.css.PseudoClass;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;

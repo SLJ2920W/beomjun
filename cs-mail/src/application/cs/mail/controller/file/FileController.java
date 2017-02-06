@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +39,8 @@ import javafx.scene.layout.HBox;
 public class FileController implements Initializable {
 
 	Selection selection = Selection.getInstance();
-
 	private static final Logger log = LoggerFactory.getLogger(FileController.class);
+	private static final int MAX_THREAD = 3;
 
 	@FXML
 	private TableView<FileBean> fileListView;
@@ -74,16 +75,19 @@ public class FileController implements Initializable {
 		setEvent(); // 이벤트
 	}
 
-	// temp
+	// temp temp temp temp temp temp
 	public void threadStop(ExecutorService task) {
-		task.shutdownNow();
+		// task.awaitTermination(timeout, unit)
+		// 폴더 트리가나 파일이 매우 많아지고 복잡해지면 시간이 오래걸리는데 임의로 종료 시킬수 있게 종료 버튼 기능
+		// task.shutdownNow();
 	}
 
 	// 파일 변경 내역 확인 EML -> HTML
 	public void defaultThread() {
 		// EML -> HTML 변환함
 		TaskChangeToHtml task = new TaskChangeToHtml();
-		ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
+		ExecutorService service = Executors.newFixedThreadPool(MAX_THREAD, new DaemonThreadFactory(task));
+
 		service.submit(task);
 	}
 
@@ -115,7 +119,7 @@ public class FileController implements Initializable {
 		} else {
 			TaskLuceneSearch task = new TaskLuceneSearch(searchField.getText());
 			// 검색 스레드
-			ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
+			ExecutorService service = Executors.newFixedThreadPool(MAX_THREAD, new DaemonThreadFactory(task));
 			service.submit(task);
 			task.setOnSucceeded((e) -> {
 				listMerge = FXCollections.observableArrayList(task.getValue());
@@ -131,7 +135,7 @@ public class FileController implements Initializable {
 	public void updateIndex() {
 		// HTML만 인덱스 잡음
 		TaskLuceneIndex task = new TaskLuceneIndex(Mode.UPDATE);
-		ExecutorService service = Executors.newCachedThreadPool(new DaemonThreadFactory(task));
+		ExecutorService service = Executors.newFixedThreadPool(MAX_THREAD, new DaemonThreadFactory(task));
 		service.submit(task);
 	}
 
@@ -149,7 +153,6 @@ public class FileController implements Initializable {
 		listMerge.addAll(ft.getFiles());
 		fileListView.setItems(listMerge);
 		fileListView.getSelectionModel().clearSelection();
-
 	}
 
 	// 파일 내용 보여주기
@@ -165,7 +168,6 @@ public class FileController implements Initializable {
 
 		} catch (Exception e) {
 			log.error("파일뷰 에러 = " + getClass() + "\n" + e.toString());
-			e.printStackTrace();
 		}
 	}
 }

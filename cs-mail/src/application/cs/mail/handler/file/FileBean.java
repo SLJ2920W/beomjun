@@ -96,4 +96,44 @@ public class FileBean implements EventHandler<ActionEvent> {
 
 	}
 
+	public final javafx.beans.property.ReadOnlyObjectProperty<javafx.scene.control.Hyperlink> filePathProperty() {
+		return this.filePath.getReadOnlyProperty();
+	}
+
+	public final javafx.scene.control.Hyperlink getFilePath() {
+		return this.filePathProperty().get();
+	}
+
+	public final javafx.beans.property.ReadOnlyObjectProperty<javafx.scene.layout.HBox> filePathIconProperty() {
+		return this.filePathIcon.getReadOnlyProperty();
+	}
+
+	public final javafx.scene.layout.HBox getFilePathIcon() {
+		return this.filePathIconProperty().get();
+	}
+
+	public final javafx.beans.property.ReadOnlyStringProperty fileNameProperty() {
+		return this.fileName.getReadOnlyProperty();
+	}
+
+	public final java.lang.String getFileName() {
+		return this.fileNameProperty().get();
+	}
+
+	public final javafx.beans.property.ReadOnlyLongProperty fileSizeProperty() {
+		return this.fileSize.getReadOnlyProperty();
+	}
+
+	public final long getFileSize() {
+		return this.fileSizeProperty().get();
+	}
+
+	public final javafx.beans.property.ReadOnlyObjectProperty<java.nio.file.attribute.FileTime> fileTimeProperty() {
+		return this.fileTime.getReadOnlyProperty();
+	}
+
+	public final java.nio.file.attribute.FileTime getFileTime() {
+		return this.fileTimeProperty().get();
+	}
+
 }

@@ -58,13 +58,15 @@ public class TaskChangeToHtml extends Task<Queue<String>> {
 						// HTML 변경 허용 할 규칙
 						if (filter(file)) {
 							// 그룹웨어에서 사용 하는 EML -> HTML 변경
+							log.debug("변환 중.. "+file.getFileName());
 							updateMessage("변환 중.. "+file.getFileName());
 							MimeUtils.decodeLocalForSearch(file.toFile());
 						} else{
+							log.debug("확인 중.. "+file.getFileName());
 							updateMessage("확인 중.. "+file.getFileName());
 						}
 					} catch (Exception e) {
-						log.info("EML -> HTML 변환 실패 : {}" + file.toFile());
+						log.error("EML -> HTML 변환 실패 : {}" + file.toFile());
 						result.add(file.toFile().toString());
 					}
 					return FileVisitResult.CONTINUE;
