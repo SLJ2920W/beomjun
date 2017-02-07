@@ -7,6 +7,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 
 import application.cs.mail.common.Selection;
+import application.cs.mail.handler.mime.MetaData;
+import application.cs.mail.handler.search.SearchType;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -22,19 +25,39 @@ import javafx.scene.layout.HBox;
 
 public class FileBean implements EventHandler<ActionEvent> {
 
-	private ReadOnlyObjectWrapper<Hyperlink> filePath = new ReadOnlyObjectWrapper<>(this, "filePath");
+	// 메일 파일 첨부 여부
+	private ReadOnlyObjectWrapper<Label> fileAttach = new ReadOnlyObjectWrapper<Label>(this, "fileAttach");
+	// 메일 보낸 사람
+	private ReadOnlyStringWrapper fileFrom = new ReadOnlyStringWrapper(this, "fileFrom");
+	// 메일 경로와 아이콘 포함
 	private ReadOnlyObjectWrapper<HBox> filePathIcon = new ReadOnlyObjectWrapper<HBox>(this, "filePathIcon");
-	private ReadOnlyStringWrapper fileName = new ReadOnlyStringWrapper(this, "fileName");
+	// 메일 경로
+	private ReadOnlyObjectWrapper<Hyperlink> filePath = new ReadOnlyObjectWrapper<>(this, "filePath");
+	// 메일 전송일
+	private ReadOnlyStringWrapper fileDate = new ReadOnlyStringWrapper(this, "fileDate");
+	// 메일 사이즈
 	private ReadOnlyLongWrapper fileSize = new ReadOnlyLongWrapper(this, "fileSize");
+	// 윈도우 탐색기 에서 파일 수정된 날짜 (메일 내용과 관련 없음)
 	private ReadOnlyObjectWrapper<FileTime> fileTime = new ReadOnlyObjectWrapper<>(this, "fileTime");
 
-	public FileBean(Path home, Path file, BasicFileAttributes attrs) {
+	/**
+	 * @param home
+	 *            선택된 경로 최상위
+	 * @param file
+	 *            현재 경로
+	 * @param attrs
+	 *            현재 경로의 파일 속성
+	 * @param searchType
+	 *            검색 여부
+	 */
+	public FileBean(Path home, Path file, BasicFileAttributes attrs, SearchType searchType) {
 
 		String text = "";
-		if (home == null) { // 검색인 경우 전체 경로 보여짐
+		if (home == null || !searchType.equals(SearchType.NONE)) { // 검색인 경우 전체
+																	// 경로 보여짐
 			text = file.toString();
 		} else if (home.equals(file)) { // 상위 폴더 이동 기능
-			text = "..";
+			// text = "..";
 		} else { // 그외 상대경로 형태로 폴더 및 파일 보여짐
 			text = home.relativize(file).toString();
 		}
@@ -49,19 +72,19 @@ public class FileBean implements EventHandler<ActionEvent> {
 		// [e] 링크 텍스트
 
 		// [s] 파일 및 폴더 이미지 설정
-		String i = attrs.isDirectory() ? "/resources/cs/mail/img/folder.png" : "/resources/cs/mail/img/file.png";
-		Label label = new Label();
-		ImageView bg = new ImageView(new Image(getClass().getResourceAsStream(i)));
-		bg.setFitWidth(20);
-		bg.setPreserveRatio(true);
-		bg.setSmooth(true);
-		bg.setCache(true);
-		label.setGraphic(bg);
+//		String i = attrs.isDirectory() ? "/resources/cs/mail/img/folder.png" : "/resources/cs/mail/img/file.png";
+//		Label label = new Label();
+//		ImageView bg = new ImageView(new Image(getClass().getResourceAsStream(i)));
+//		bg.setFitWidth(20);
+//		bg.setPreserveRatio(true);
+//		bg.setSmooth(true);
+//		bg.setCache(true);
+//		label.setGraphic(bg);
 		// [e] 파일 및 폴더 이미지 설정
 
 		HBox box = new HBox();
 		box.setAlignment(Pos.CENTER_LEFT);
-		box.getChildren().add(label);
+//		box.getChildren().add(label);
 		box.getChildren().add(link);
 		filePathIcon.set(box);
 
@@ -76,9 +99,29 @@ public class FileBean implements EventHandler<ActionEvent> {
 			size = 0L;
 			time = FileTime.fromMillis(0L);
 		}
-		fileName.set("");
+
+		MetaData meta = new MetaData(file);
+		
+		// [s] 첨부파일..
+		String i = "/resources/cs/mail/img/attach.png";
+		if (meta.getMetaAttach() != null) {
+			Label label = new Label();
+			ImageView bg = new ImageView(new Image(getClass().getResourceAsStream(i)));
+			bg.setFitWidth(15);
+			bg.setPreserveRatio(true);
+			bg.setSmooth(true);
+			bg.setCache(true);
+			label.setGraphic(bg);
+			fileAttach.setValue(label);
+		}
+		// [e] 첨부파일..
+
+
+		fileFrom.setValue(meta.getMetaFrom());
+		fileDate.setValue(meta.getMetaSentDate());
+
 		fileSize.set(size);
-		fileTime.set(time);
+		fileTime.set(time); // ex 파일 수정 시간
 		// [e] 기타
 
 	}
@@ -112,12 +155,36 @@ public class FileBean implements EventHandler<ActionEvent> {
 		return this.filePathIconProperty().get();
 	}
 
-	public final javafx.beans.property.ReadOnlyStringProperty fileNameProperty() {
-		return this.fileName.getReadOnlyProperty();
+	public final javafx.beans.property.ReadOnlyObjectProperty<java.nio.file.attribute.FileTime> fileTimeProperty() {
+		return this.fileTime.getReadOnlyProperty();
 	}
 
-	public final java.lang.String getFileName() {
-		return this.fileNameProperty().get();
+	public final java.nio.file.attribute.FileTime getFileTime() {
+		return this.fileTimeProperty().get();
+	}
+
+	public final javafx.beans.property.ReadOnlyStringProperty fileFromProperty() {
+		return this.fileFrom.getReadOnlyProperty();
+	}
+
+	public final java.lang.String getFileFrom() {
+		return this.fileFromProperty().get();
+	}
+
+	public final javafx.beans.property.ReadOnlyStringProperty fileDateProperty() {
+		return this.fileDate.getReadOnlyProperty();
+	}
+
+	public final java.lang.String getFileDate() {
+		return this.fileDateProperty().get();
+	}
+
+	public final javafx.beans.property.ReadOnlyObjectProperty<javafx.scene.control.Label> fileAttachProperty() {
+		return this.fileAttach.getReadOnlyProperty();
+	}
+
+	public final javafx.scene.control.Label getFileAttach() {
+		return this.fileAttachProperty().get();
 	}
 
 	public final javafx.beans.property.ReadOnlyLongProperty fileSizeProperty() {
@@ -126,14 +193,6 @@ public class FileBean implements EventHandler<ActionEvent> {
 
 	public final long getFileSize() {
 		return this.fileSizeProperty().get();
-	}
-
-	public final javafx.beans.property.ReadOnlyObjectProperty<java.nio.file.attribute.FileTime> fileTimeProperty() {
-		return this.fileTime.getReadOnlyProperty();
-	}
-
-	public final java.nio.file.attribute.FileTime getFileTime() {
-		return this.fileTimeProperty().get();
 	}
 
 }

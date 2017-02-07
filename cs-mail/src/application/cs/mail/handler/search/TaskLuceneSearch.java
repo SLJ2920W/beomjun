@@ -112,7 +112,7 @@ public class TaskLuceneSearch extends Task<Queue<FileBean>> {
 				}
 			}
 			Path path = Paths.get(title.replaceAll(".htm", ".eml"));
-			result.add(new FileBean(null, path, Files.readAttributes(path, BasicFileAttributes.class)));
+			result.add(new FileBean(null, path, Files.readAttributes(path, BasicFileAttributes.class), SearchType.CONTENT));
 		}
 		return result;
 	}

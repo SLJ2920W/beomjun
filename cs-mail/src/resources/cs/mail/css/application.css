@@ -13,3 +13,27 @@
   -fx-tab-max-width:120px;
   -fx-tab-max-height:40px;
 }
+
+.menu-button {
+  -fx-background-image: url('open.png');
+  -fx-background-repeat: no-repeat;
+  -fx-background-position: 5;
+  -fx-background-size : 20;
+}
+ 
+.index-button {
+  -fx-background-image: url('refresh.png');
+  -fx-background-repeat: no-repeat;
+  -fx-background-position: 5;
+  -fx-background-size : 20;
+}
+
+.tbl-alignCenter{
+	-fx-alignment: center ;
+}
+
+
+/* 
+.toggle-button:selected {
+  -fx-background-image: url('http://icons.iconarchive.com/icons/aha-soft/desktop-buffet/128/Piece-of-cake-icon.png');
+}*/

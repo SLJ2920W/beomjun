@@ -18,7 +18,14 @@ logback-core-1.1.8.jar
 janino-3.0.6.jar
 commons-compiler-3.0.6.jar
 
+attach
+https://www.iconfinder.com/icons/809574/attach_attachment_clipmark_office_icon#size=128
 
+open
+https://www.iconfinder.com/icons/1493293/file_folder_open_icon#size=128
+
+refresh
+https://www.iconfinder.com/icons/216529/refresh_icon#size=128
 
 app.png
 -> https://www.iconfinder.com/icons/763297/common_email_envelope_letter_mail_send_icon#size=128

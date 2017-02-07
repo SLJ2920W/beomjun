@@ -24,6 +24,7 @@ public class App {
 	private static Image applicationIcon;
 	private static final Properties props = new Properties();
 	public static final String INDEX_FOLDER = "index";
+	public static final int MAX_THREAD = 3;
 
 	public App() {
 	}

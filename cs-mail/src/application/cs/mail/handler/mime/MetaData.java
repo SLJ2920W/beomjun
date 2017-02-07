@@ -6,15 +6,22 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
 import javax.mail.Address;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
+import sun.rmi.runtime.Log;
 
 public class MetaData {
 
@@ -26,7 +33,7 @@ public class MetaData {
 	private final ReadOnlyStringWrapper metaTo = new ReadOnlyStringWrapper(this, "metaTo");
 	private final ReadOnlyStringWrapper metaCC = new ReadOnlyStringWrapper(this, "metaCC");
 	private final ReadOnlyStringWrapper metaBCC = new ReadOnlyStringWrapper(this, "metaBCC");
-	
+	private final ReadOnlyStringWrapper metaAttach = new ReadOnlyStringWrapper(this, "metaAttach", null);
 
 	public MetaData() {
 
@@ -44,10 +51,48 @@ public class MetaData {
 			try (InputStream stream = new ByteArrayInputStream(buffer)) {
 				MimeMessage msg = new MimeMessage(session, stream);
 
+				// 첨부 관련 temp temp temp temp temp temp temp temp temp temp temp temp temp temp
+				Object msgContent = msg.getContent();
+				if (msgContent instanceof Multipart) {
+					Multipart multipart = (Multipart) msgContent;
+
+					for (int j = 0; j < multipart.getCount(); j++) {
+						BodyPart bodyPart = multipart.getBodyPart(j);
+						String disposition = bodyPart.getDisposition();
+						if (disposition != null && (disposition.equalsIgnoreCase("ATTACHMENT"))) {
+							DataHandler handler = bodyPart.getDataHandler();
+
+							String s = handler.getName();
+
+							if (s == null)
+								metaAttach.setValue("y");
+							else
+								metaAttach.setValue("");
+
+							// 파일명 알아내기 .....
+//							Matcher m = Pattern.compile("(=\\?)(.*)(\\?B\\?)").matcher(s);
+//							String enc = "";
+//							if (m.find()) {
+//								enc = m.group(2);
+//							}
+//
+//							s = s.replaceAll(".*\\?B\\?", "");
+//							s = s.replace("?=", "");
+//							try {
+//								byte[] a = Base64.getDecoder().decode(s);
+//								metaAttach.setValue(new String(a, enc));
+//							} catch (Exception e) {
+//								metaAttach.setValue(s);
+//							}
+						}
+					}
+				}
+				// 첨부 관련 temp temp temp temp temp temp temp temp temp temp temp temp temp temp
+
 				String sentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(msg.getSentDate());
 
 				// 탭에 표시 하는 탭 제목용
-				metaTabTitle.set(formatAddresses(msg.getFrom(), true));				
+				metaTabTitle.set(formatAddresses(msg.getFrom(), true));
 				// 전송 날짜
 				metaSentDate.set(sentDate);
 				// 보낸 사람
@@ -57,7 +102,7 @@ public class MetaData {
 				// 회신 받는 메일 주소
 				metaReplyTo.set(formatAddresses(msg.getReplyTo()));
 				// 받는 사람
-				if(msg.getRecipients(Message.RecipientType.TO) != null)
+				if (msg.getRecipients(Message.RecipientType.TO) != null)
 					metaTo.set(formatAddresses(msg.getRecipients(Message.RecipientType.TO)));
 				// 참조
 				if (msg.getRecipients(Message.RecipientType.CC) != null)
@@ -97,7 +142,7 @@ public class MetaData {
 					out.append("[");
 					out.append(address.getAddress().split("@")[0]);
 					out.append("]");
-				} else {					
+				} else {
 					out.append(address.getPersonal());
 					out.append("[");
 					out.append(address.getAddress());
@@ -112,83 +157,73 @@ public class MetaData {
 	public final javafx.beans.property.ReadOnlyStringProperty metaTabTitleProperty() {
 		return this.metaTabTitle.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaTabTitle() {
 		return this.metaTabTitleProperty().get();
 	}
-	
 
 	public final javafx.beans.property.ReadOnlyStringProperty metaSubjectProperty() {
 		return this.metaSubject.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaSubject() {
 		return this.metaSubjectProperty().get();
 	}
-	
 
 	public final javafx.beans.property.ReadOnlyStringProperty metaReplyToProperty() {
 		return this.metaReplyTo.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaReplyTo() {
 		return this.metaReplyToProperty().get();
 	}
-	
 
 	public final javafx.beans.property.ReadOnlyStringProperty metaSentDateProperty() {
 		return this.metaSentDate.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaSentDate() {
 		return this.metaSentDateProperty().get();
 	}
-	
 
 	public final javafx.beans.property.ReadOnlyStringProperty metaFromProperty() {
 		return this.metaFrom.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaFrom() {
 		return this.metaFromProperty().get();
 	}
-	
 
 	public final javafx.beans.property.ReadOnlyStringProperty metaToProperty() {
 		return this.metaTo.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaTo() {
 		return this.metaToProperty().get();
 	}
-	
 
 	public final javafx.beans.property.ReadOnlyStringProperty metaCCProperty() {
 		return this.metaCC.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaCC() {
 		return this.metaCCProperty().get();
 	}
-	
 
 	public final javafx.beans.property.ReadOnlyStringProperty metaBCCProperty() {
 		return this.metaBCC.getReadOnlyProperty();
 	}
-	
 
 	public final java.lang.String getMetaBCC() {
 		return this.metaBCCProperty().get();
 	}
-	
 
+	public final javafx.beans.property.ReadOnlyStringProperty metaAttachProperty() {
+		return this.metaAttach.getReadOnlyProperty();
+	}
 
+	public final java.lang.String getMetaAttach() {
+		return this.metaAttachProperty().get();
+	}
 
 }

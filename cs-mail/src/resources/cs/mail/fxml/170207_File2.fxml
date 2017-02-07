@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefWidth="791.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.cs.mail.controller.file.FileController">
+   <children>
+      <HBox prefHeight="0.0" prefWidth="781.0">
+         <children>
+            <TextField fx:id="searchField" focusTraversable="false" prefHeight="23.0" prefWidth="319.0" promptText="검색어를 입력 하세요" />
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#setSearch" text="검색">
+               <HBox.margin>
+                  <Insets left="5.0" right="5.0" />
+               </HBox.margin></Button>
+            <ComboBox fx:id="searchComboBox" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="5.0" right="5.0" />
+               </HBox.margin></ComboBox>
+            <Button mnemonicParsing="false" onAction="#updateIndex" text="인덱스 생성(Test)" />
+         </children>
+         <VBox.margin>
+            <Insets left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <SplitPane dividerPositions="0.4192577733199599" orientation="VERTICAL" prefHeight="999.0" prefWidth="791.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="789.0">
+               <children>
+                  <TableView fx:id="fileListView" focusTraversable="false" prefHeight="600.0" prefWidth="789.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="fileNameColumn" prefWidth="75.0" text="이름" />
+                      <!--
+                      	<TableColumn fx:id="filePathColumn" prefWidth="75.0" text="파일경로" /> 
+                      	<TableColumn fx:id="fileTitleColumn" prefWidth="75.0" text="파일명" />
+                        <TableColumn fx:id="fileCommentColumn" prefWidth="75.0" text="빈 텍스트" /> 
+                       -->
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0">
+               <children>
+                  <TabPane fx:id="tabPane" prefWidth="999.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</VBox>

@@ -89,7 +89,7 @@ public class TabContext extends ContextMenu {
 		});
 	}
 
-	// 우측 닫기 - 안됨
+	// 우측 닫기
 	public void setRightClose() {
 		rightClose.setOnAction((event) -> {
 			tabPane.getSelectionModel().select(tab);

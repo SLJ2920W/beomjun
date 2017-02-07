@@ -85,10 +85,10 @@ public class FileTree {
 				// 선택한 경로 루트
 				@Override
 				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-					if (!isSearch()) {
-						// 검색 아닐 경우 상위로 이동 표시
-						folders.add(new FileBean(dir.getParent(), dir.getParent(), attrs));
-					}
+//					if (!isSearch()) {
+//						// 검색 아닐 경우 상위로 이동 표시
+//						folders.add(new FileBean(dir.getParent(), dir.getParent(), attrs, searchType));
+//					}
 
 					if (!Files.isHidden(dir))
 						return FileVisitResult.CONTINUE;
@@ -104,11 +104,11 @@ public class FileTree {
 							return FileVisitResult.CONTINUE;
 
 						if (Files.isDirectory(file)) { // 폴더인 경우
-							folders.add(new FileBean(home, file, attrs));
+//							folders.add(new FileBean(home, file, attrs, searchType));
 						} else { // 파일인 경우
 							// 검색인 경우 검색 필터 확인
 							if (filter(file, searchType)) {
-								files.add(new FileBean(home, file, attrs));
+								files.add(new FileBean(home, file, attrs, searchType));
 							}
 						}
 					} catch (IOException | SecurityException e) {
