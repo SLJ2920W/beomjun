@@ -11,7 +11,7 @@ public class Filder2 {
 	public static void main(String[] args) {
 		FileSystem fileSystem = FileSystems.getDefault();
 		PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:**.{java,class,txt}");
-		Path path = Paths.get("HelloController");
+		Path path = Paths.get("FileNameFilterTest");
 		System.out.println(pathMatcher.matches(path));
 
 	}

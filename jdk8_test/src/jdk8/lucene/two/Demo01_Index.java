@@ -37,6 +37,9 @@ public class Demo01_Index {
 
 	private Demo01_Index() {
 	}
+	
+//	D:\Store\folder
+//	D:\Store\folder\index
 
 	/** Index all text files under a directory. */
 	public static void main(String[] args) {

@@ -5,7 +5,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.spi.FileTypeDetector;
 
 public class Test {
 
@@ -30,10 +29,7 @@ public class Test {
 	    		System.out.println(sdf.getFileName().toString());
 	    	}
 	    });
-	    
-	    
-	    
-		
+
 	    /*
 	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
 	        for (Path path : stream) {

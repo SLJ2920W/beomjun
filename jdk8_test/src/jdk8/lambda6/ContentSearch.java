@@ -9,16 +9,16 @@ import java.util.Scanner;
 public class ContentSearch {
 	public static void main(String[] args) {
 		
-		File selectedFile = new File("D:\\Hanwha\\매일 백업");
+		File selectedFile = new File("D:\\Store\\mailTest_date");
 		
 		File folder = selectedFile.isDirectory() ? selectedFile : selectedFile;
 		List<String> files = new ArrayList<String>();
 		try {
-			files = ContentSearch.searchFiles(folder, "회의", files);
+			files = ContentSearch.searchFiles(folder, "테스트", files);
 			files.forEach(System.out::println);
 		} catch (FileNotFoundException e1) {
-			// you should tell the user here that something went wrong
-		}
+			e1.printStackTrace();
+		} 
 	}
 
 	public static List<String> searchFiles(File file, String pattern, List<String> result) throws FileNotFoundException {

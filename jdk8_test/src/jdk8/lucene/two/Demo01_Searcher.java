@@ -29,14 +29,11 @@ public class Demo01_Searcher {
 	}
 
 	/**
-	 * -index 검색 시작 폴더 인덱스 위치
-	 * -field 뭘까? 
-	 * -queries 검색어를 파일 형태로 읽어와서 하는듯 
-	 * -query 검색어
-	 * -repeat 검색 최대 시간?
-	 * -raw 무슨 스코어? 같은게 나옴 뭐지
-	 * -paging
+	 * -index 검색 시작 폴더 인덱스 위치 -field 뭘까? -queries 검색어를 파일 형태로 읽어와서 하는듯 -query
+	 * 검색어 -repeat 검색 최대 시간? -raw 무슨 스코어? 같은게 나옴 뭐지 -paging
 	 */
+	/** Simple command-line based search demo. */
+	/** Simple command-line based search demo. */
 	/** Simple command-line based search demo. */
 	public static void main(String[] args) throws Exception {
 		String usage = "Usage:\tjava org.apache.lucene.demo.SearchFiles [-index dir] [-field f] [-repeat n] [-queries file] [-query string] [-raw] [-paging hitsPerPage]\n\nSee http://lucene.apache.org/core/4_1_0/demo/ for details.";
@@ -91,17 +88,6 @@ public class Demo01_Searcher {
 		} else {
 			in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 		}
-		
-		// 
-//		Term term = new Term(LuceneConstants.CONTENTS, "*답변 드리겠습니다.*"); 
-//		Query query = new WildcardQuery(term);
-		
-		String[] fields = { "filename", "contents", "path" };
-		BooleanClause.Occur[] flags = { BooleanClause.Occur.SHOULD,
-				BooleanClause.Occur.SHOULD,
-				BooleanClause.Occur.SHOULD};
-//		MultiFieldQueryParser.parse("query", fields, flags, analyzer);
-		
 		QueryParser parser = new QueryParser(field, analyzer);
 		while (true) {
 			if (queries == null && queryString == null) { // prompt the user
@@ -119,7 +105,6 @@ public class Demo01_Searcher {
 				break;
 			}
 
-//			Query query = MultiFieldQueryParser.parse("query", fields, flags, analyzer);
 			Query query = parser.parse(line);
 			System.out.println("Searching for: " + query.toString(field));
 

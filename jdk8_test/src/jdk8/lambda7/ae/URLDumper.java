@@ -54,13 +54,13 @@ import java.net.*;
 public class URLDumper {
     public static void main(String[] args) throws Exception {
 
-        if (args.length != 2) {
-            System.out.println("Usage:  URLDumper <URL> <file>");
-            System.exit(1);
-        }
+//        if (args.length != 2) {
+//            System.out.println("Usage:  URLDumper <URL> <file>");
+//            System.exit(1);
+//        }
 
-        String location = args[0];
-        String file = args[1];
+        String location = "http://www.nate.com/";
+        String file = "D:\\Store\\abc\\as.txt";
 
         URL url = new URL(location);
         FileOutputStream fos = new FileOutputStream(file);
