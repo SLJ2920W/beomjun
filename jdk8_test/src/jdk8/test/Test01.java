@@ -11,6 +11,12 @@ public class Test01 {
 
 		byte[] asBytes = Base64.getDecoder().decode("2ZiHGvzlvMA8D6GZL3IJbdUJTvgAjLErA/r2UgkJWpg=");
 		System.out.println(new String(asBytes));
+		
+		
+		
+		
+		System.out.println("테스트......");
+		
 	}
 
 }
