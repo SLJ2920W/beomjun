@@ -37,10 +37,14 @@ package jdk8.lambda7.ae;
  * input validation and proper error handling, might not be present in
  * this sample code.
  */
-
-
-import java.io.*;
-import java.net.*;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 
 /**
  * A simple example to illustrate using a URL to access a resource
@@ -61,7 +65,13 @@ public class URLDumper {
 
         String location = "http://www.nate.com/";
         String file = "D:\\Store\\abc\\as.txt";
-
+        
+        Path p = Paths.get(file);
+        boolean f = Files.notExists(p);
+        if(f)
+        	Files.createDirectories(p.getParent());
+        
+        
         URL url = new URL(location);
         FileOutputStream fos = new FileOutputStream(file);
 
