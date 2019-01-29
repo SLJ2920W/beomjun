@@ -15,7 +15,7 @@ public class ThreadTest2 {
 	public static void main(String[] args) {
 		BlockingQueue<Path> pathQueue = new ArrayBlockingQueue<>(1);
 
-		final Path myPath = Paths.get("D:\\Hanwha\\메일백업\\test");
+		final Path myPath = Paths.get("D:\\메일백업\\test");
 		Runnable r1 = new Runnable() {
 			@Override
 			public void run() {
